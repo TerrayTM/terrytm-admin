@@ -1,0 +1,11 @@
+{
+  "name": "terrytm-admin",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "migrate": "php .\\Tools\\Migrate.php",
+    "autoload": "composer dump-autoload",
+    "start": "php -S localhost:8888"
+  },
+  "author": "Terry Zheng"
+}

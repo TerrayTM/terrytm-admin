@@ -1,0 +1,12 @@
+{
+    "require": {
+        "illuminate/database": "^5.8",
+        "cloudinary/cloudinary_php": "^1.14"
+    },
+    "autoload": {
+        "classmap": [
+            "Models",
+            "Constants"
+        ]
+    }
+}
