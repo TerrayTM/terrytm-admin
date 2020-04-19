@@ -1,13 +1,5 @@
 <?php
 
-$styles = '
-  <style>
-    .center {
-      text-align: center;
-    }
-  </style>
-';
-
 require_once(__DIR__ . "/Partials/Authenticator.php");
 require_once(__DIR__ . "/Resources/Components/Header.php");
 require_once(__DIR__ . "/Partials/DatabaseConnector.php");
@@ -87,7 +79,7 @@ require_once(__DIR__ . "/Partials/DatabaseConnector.php");
 
       function create(event) {
         event.preventDefault();
-        const url = document.getElementById('url').innerText;
+        const url = document.getElementById('url').innerText.trim();
         if (url) {
           postRequest('/Controllers/Admin/SSL.php', 'create', { url });
         }

@@ -211,7 +211,11 @@ foreach ($tasks as $task) {
                     </div>
                   </div>
                 </div>
-                <div class="card-body" style="height: 360px;">
+                <div class="card-body" style="height: 360px; overflow: auto;">
+                  <div id="taskEmpty" style="display: <?php echo(strlen($task_list) > 0 ? "none" : "flex"); ?>; width: 100%; height: 300px; align-items: center; justify-content: center; flex-flow: column;">
+                    <span class="fa fa-bell" style="font-size: 128px;"></span>
+                    <p style="font-size: 32px; margin: 16px 0 0 0;">No tasks available!</p>
+                  </div>
                   <ol id="taskContainer">
                     <?php echo($task_list); ?>
                   </ol>
@@ -244,7 +248,7 @@ foreach ($tasks as $task) {
                   <h6 class="m-0 font-weight-bold text-primary">Status Log</h6>
                 </div>
                 <div class="card-body">
-                  <textarea style="width: 100%; height: 202px; outline: none; cursor: default;" readonly id="log">No entries available!</textarea>
+                  <div style="width: 100%; height: 209px; overflow: auto; border: 1px solid lightgray; border-radius: 3px; padding: 8px; cursor: default;" readonly id="log">No entries available!</div>
                 </div>
               </div>
             </div>
@@ -276,29 +280,59 @@ foreach ($tasks as $task) {
         document.getElementById('log').innerHTML = '';
         logEntries = true;
       }
-      document.getElementById('log').innerHTML += `${text}\n`;
+      if (text.includes('[Error]')) {
+        text = `<span style="color: red;">${text}</span>`;
+      }
+      document.getElementById('log').innerHTML += `> ${text}<br>`;
+    }
+
+    function updateTaskEmpty() {
+      if (document.getElementById('taskContainer').childElementCount === 0) {
+        document.getElementById('taskEmpty').style.display = 'flex';
+      }
     }
 
     function deleteTask(id) {
-      const node = document.getElementById(`task_${id}`);
-      node.parentElement.removeChild(node);
-      postRequest('/Controllers/Admin/Dashboard.php', 'deleteTask', { id });
+      asyncPostRequest('/Controllers/Admin/Dashboard.php', 'deleteTask', { id }).then(({ status }) => {
+        log(status);
+        const node = document.getElementById(`task_${id}`);
+        node.parentElement.removeChild(node);
+        updateTaskEmpty();
+      });
     }
 
     function createTask(event) {
       if (!taskCreating) {
-        event.preventDefault();
-        document.getElementById('taskContainer').innerHTML += '<li style="border: 1px solid; outline: none; padding: 0 6px;" contenteditable onKeyDown="taskInput(event)"></li>';
+        document.getElementById('taskEmpty').style.display = 'none';
+        document.getElementById('taskContainer').innerHTML += '<li style="border-radius: 3px; border: 1px solid lightgray; outline: none; padding: 0 6px;" contenteditable onKeyDown="taskInput(event)"></li>';
         taskCreating = true;
       }
+      event.preventDefault();
     }
 
     function taskInput(event) {
-      if (event.keyCode == 13) {
-        if (event.target.innerHTML) {
-          postRequest('/Controllers/Admin/Dashboard.php', 'createTask', { text: event.target.innerHTML });
+      if (event.keyCode === 13) {
+        const text = event.target.innerText.trim();
+        if (text) {
+          asyncPostRequest('/Controllers/Admin/Dashboard.php', 'createTask', { text }).then(({ status, data }) => {
+            log(status);
+            const current = event.target;
+            current.parentElement.removeChild(current);
+            const item = document.createElement('li');
+            item.classList.add('task-style');
+            item.setAttribute('onclick', `deleteTask('${data.id}')`);
+            item.id = `task_${data.id}`;
+            item.innerHTML = text;
+            document.getElementById('taskContainer').appendChild(item);
+            taskCreating = false;
+          });
           event.preventDefault();
         }
+      } else if (event.keyCode === 27) {
+        const current = event.target;
+        current.parentElement.removeChild(current);
+        taskCreating = false;
+        updateTaskEmpty();
       }
     }
 
@@ -336,7 +370,7 @@ foreach ($tasks as $task) {
           ]);
           ++success;
         } catch (error) {
-          log(`Repl.it Server Offline: ${servers[i]}`);
+          log(`[Error] Server Offline: ${servers[i]}`);
         }
       }
       document.getElementById('serverHealth').innerHTML = `Servers: ${success}/${servers.length}`;

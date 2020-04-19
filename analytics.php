@@ -1,13 +1,5 @@
 <?php
 
-$styles = '
-  <style>
-    .center {
-      text-align: center;
-    }
-  </style>
-';
-
 require_once(__DIR__ . "/Partials/Authenticator.php");
 require_once(__DIR__ . "/Resources/Components/Header.php");
 require_once(__DIR__ . "/Partials/DatabaseConnector.php");
@@ -60,6 +52,15 @@ require_once(__DIR__ . "/Partials/DatabaseConnector.php");
                   </tbody>
                 </table>
               </div>
+            </div>
+          </div>
+          <div class="card shadow mb-4">
+            <div class="card-header py-3">
+              <h6 class="m-0 font-weight-bold text-primary">Breakdown</h6>
+            </div>
+            <div class="card-body">
+              <p>Visits from Facebook: <?php echo(Analytics::where("group", "Facebook")->count()); ?></p>
+              <p>Visits from Resume: <?php echo(Analytics::where("group", "Resume")->count()); ?></p>
             </div>
           </div>
         </div>

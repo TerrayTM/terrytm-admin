@@ -1,13 +1,5 @@
 <?php
 
-$styles = '
-  <style>
-    .center {
-      text-align: center;
-    }
-  </style>
-';
-
 require_once(__DIR__ . "/Partials/Authenticator.php");
 require_once(__DIR__ . "/Resources/Components/Header.php");
 require_once(__DIR__ . "/Partials/DatabaseConnector.php");
@@ -35,6 +27,7 @@ require_once(__DIR__ . "/Partials/DatabaseConnector.php");
                     <tr>
                       <th>ID</th>
                       <th>URL</th>
+                      <th>Wake</th>
                       <th>Delete</th>
                     </tr>
                   </thead>
@@ -48,6 +41,7 @@ require_once(__DIR__ . "/Partials/DatabaseConnector.php");
                           <tr>
                             <td>' . $server->id . '</td>
                             <td><a href="' . $server->url . '" target="_blank">' . $server->url . '</a></td>
+                            <td class="center"><a href="#" onClick="wake(event, \'' . $server->id . '\')"><span class="fa fa-play"></span></a></td>
                             <td class="center"><a href="#" onClick="deleteRow(event, \'' . $server->id . '\')"><span class="fa fa-trash"></span></a></td>
                           </tr>
                         ');
@@ -57,6 +51,7 @@ require_once(__DIR__ . "/Partials/DatabaseConnector.php");
                     <tr>
                       <td>Create</td>
                       <td contenteditable id="url"></td>
+                      <td></td>
                       <td class="center"><a href="#" onClick="create(event)"><span class="fa fa-save"></span></a></td>
                     </tr>
                   </tbody>
@@ -96,6 +91,21 @@ require_once(__DIR__ . "/Partials/DatabaseConnector.php");
       function deleteRow(event, id) {
         event.preventDefault();
         postRequest('/Controllers/Admin/Servers.php', 'delete', { id });
+      }
+
+      function wake(event, id) {
+        event.preventDefault();
+        if (event.target.className === 'fa fa-signal') {
+          return;
+        }
+        event.target.className = 'fa fa-signal';
+        asyncPostRequest('/Controllers/Admin/Servers.php', 'wake', { id }).then((response) => {
+          if (response.success && response.data.success) {
+            event.target.className = 'fa fa-thumbs-up';
+          } else {
+            event.target.className = 'fa fa-thumbs-down';
+          }
+        });
       }
     </script>
 </body>

@@ -15,7 +15,9 @@ class CreateProjectTechnologiesTable {
                 $table->foreign("project_id")->references("id")->on("projects")->onDelete("cascade");
                 $table->string("technology", 32);
             });
+            return true;
         }
+        return false;
     }
 
     public function down() {

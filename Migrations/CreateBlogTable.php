@@ -15,7 +15,9 @@ class CreateBlogTable {
                 $table->string("author", 64);
                 $table->text("content");
             });
+            return true;
         }
+        return false;
     }
 
     public function down() {

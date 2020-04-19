@@ -24,7 +24,7 @@ if (isset($_POST['request']) && $_POST['request'] === "logout") {
     if (isset($_POST['username']) && isset($_POST['password'])) {
       require_once(__DIR__ . "/../../Config/Config.php");
 
-      if ($_POST['username'] === config("username") && $_POST['password'] === config("password")) {
+      if ($_POST['username'] === config("username") && hash_equals($_POST['password'], config("password"))) {
         if (isset($_POST['remember']) && $_POST['remember']) {
           $payload = (string)(time() + 2592000);
           $signed_payload = json_encode([

@@ -14,7 +14,9 @@ class CreateImageGroupsTable {
                 $table->string("link_id", 32)->index();
                 $table->boolean("is_deleted")->default(false)->index();
             });
+            return true;
         }
+        return false;
     }
 
     public function down() {

@@ -16,7 +16,9 @@ class CreateProjectImagesTable {
                 $table->string("url", 128);
                 $table->unsignedInteger("order");
             });
+            return true;
         }
+        return false;
     }
 
     public function down() {

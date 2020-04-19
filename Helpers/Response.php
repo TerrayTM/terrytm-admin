@@ -7,7 +7,7 @@ if (!function_exists("response_success")) {
         
         $response = ["success" => true];
         
-        if ($data) {
+        if ($data && count($data) > 0) {
             $response['data'] = $data;
         }
 

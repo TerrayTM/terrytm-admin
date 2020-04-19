@@ -1,4 +1,4 @@
-function postRequest(action, type, payload = null) {
+function createForm(action, type, payload = null) {
   const form = document.createElement('form');
   form.setAttribute('action', action);
   form.setAttribute('method', 'post');
@@ -15,6 +15,27 @@ function postRequest(action, type, payload = null) {
     param.setAttribute('value', payload[key]);
     form.appendChild(param);
   });
+  return form;
+}
+
+function postRequest(action, type, payload = null) {
+  const form = createForm(action, type, payload);
   document.body.appendChild(form);
   form.submit();
+}
+
+async function asyncPostRequest(action, type, payload = null) {
+  const body = new FormData(createForm(action, type, payload));
+  body.append('async', true);
+  try {
+    let response = await fetch(action, { body, method: 'post' });
+    response = await response.json();
+    if (response.success) {
+      return { status: `[Success] POST: ${action}`, success: true, data: response.data };
+    } else {
+      throw Error();
+    }
+  } catch (error) {
+    return { status: `[Error] POST: ${action}`, success: false };
+  }
 }

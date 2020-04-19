@@ -12,7 +12,9 @@ class CreateErrorsTable {
                 $table->text("json");
                 $table->timestamp("timestamp")->useCurrent();
             });
+            return true;
         }
+        return false;
     }
 
     public function down() {

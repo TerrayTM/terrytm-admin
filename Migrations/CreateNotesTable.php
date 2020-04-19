@@ -11,7 +11,9 @@ class CreateNotesTable {
                 $table->increments("id");
                 $table->text("note");
             });
+            return true;
         }
+        return false;
     }
 
     public function down() {

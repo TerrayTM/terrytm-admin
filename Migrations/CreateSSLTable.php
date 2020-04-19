@@ -12,7 +12,9 @@ class CreateSSLTable {
                 $table->string("url", 128);
                 $table->boolean("is_valid")->default(true);
             });
+            return true;
         }
+        return false;
     }
 
     public function down() {

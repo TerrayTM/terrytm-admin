@@ -15,7 +15,9 @@ class CreateImageTagsTable {
                 $table->foreign("image_id")->references("id")->on("images")->onDelete("cascade");
                 $table->string("name")->index();
             });
+            return true;
         }
+        return false;
     }
 
     public function down() {

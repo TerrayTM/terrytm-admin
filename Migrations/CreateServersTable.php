@@ -11,7 +11,9 @@ class CreateServersTable {
                 $table->increments("id");
                 $table->string("url", 128);
             });
+            return true;
         }
+        return false;
     }
 
     public function down() {

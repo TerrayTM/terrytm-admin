@@ -20,8 +20,9 @@ if (isset($_SERVER['HTTP_API_ROUTE'])) {
         case "Message": load("Message");
         case "Project": load("Project");
         case "Navigation": load("Navigation");
-        case "Error": load("Error");
         case "IndexProjects": load("IndexProjects");
+        case "Build": load("Build");
+        case "Error": load("Error");
         default: response_error("Invalid API route.");
     }
 } else {

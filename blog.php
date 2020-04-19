@@ -1,13 +1,5 @@
 <?php
 
-$styles = '
-  <style>
-    .center {
-      text-align: center;
-    }
-  </style>
-';
-
 require_once(__DIR__ . "/Partials/Authenticator.php");
 require_once(__DIR__ . "/Resources/Components/Header.php");
 require_once(__DIR__ . "/Partials/DatabaseConnector.php");
@@ -21,15 +13,14 @@ require_once(__DIR__ . "/Partials/DatabaseConnector.php");
       <div id="content">
         <?php require_once(__DIR__ . "/Resources/Components/HeadBar.php"); ?>
         <div class="container-fluid">
-          <?php
-            
-            // if (isset($_GET['edit']) || isset($_GET['create'])) {
-            //   require_once(__DIR__ . "/Resources/Components/UpdateProject.php");
-            // } else {
-            //   require_once(__DIR__ . "/Resources/Components/ProjectsTable.php");
-            // }
-
-          ?>
+          <div class="card shadow mb-4">
+            <div class="card-header py-3">
+              <h6 class="m-0 font-weight-bold text-primary">Projects</h6>
+            </div>
+            <div class="card-body">
+              <div id="editorContainer"></div>
+            </div>
+          </div>
         </div>
       </div>
       <footer class="sticky-footer bg-white">
@@ -44,6 +35,7 @@ require_once(__DIR__ . "/Partials/DatabaseConnector.php");
       <i class="fas fa-angle-up"></i>
     </a>
     <?php require_once(__DIR__ . "/Resources/Components/Footer.php"); ?>
+    <?php require_once(__DIR__ . "/Resources/Components/Editor.php"); ?>
     <script>
       function deleteRow(event, id) {
         event.preventDefault();

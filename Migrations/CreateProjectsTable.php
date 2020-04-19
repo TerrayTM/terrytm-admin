@@ -16,7 +16,9 @@ class CreateProjectsTable {
                 $table->text("description");
                 $table->string("link", 64)->nullable();
             });
+            return true;
         }
+        return false;
     }
 
     public function down() {

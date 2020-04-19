@@ -1,13 +1,5 @@
 <?php
 
-$styles = '
-  <style>
-    .center {
-      text-align: center;
-    }
-  </style>
-';
-
 require_once(__DIR__ . "/Partials/Authenticator.php");
 require_once(__DIR__ . "/Resources/Components/Header.php");
 require_once(__DIR__ . "/Partials/DatabaseConnector.php");
@@ -64,7 +56,7 @@ require_once(__DIR__ . "/Partials/DatabaseConnector.php");
                   if ($errors->count() === 0) {
                     echo('
                       <div class="card bg-success text-white shadow">
-                        <div class="card-body">No errors on website! Hurray!</div>
+                        <div class="card-body">No errors were detected. Congrats!</div>
                       </div>
                     ');
                   }

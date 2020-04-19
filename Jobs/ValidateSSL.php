@@ -2,24 +2,23 @@
 
 require_once(__DIR__ . "/../Partials/DatabaseConnector.php");
 
-$watch_items = SSL::where("is_valid", true)->get();
+$watch_items = SSL::all();
 $success = true;
 
 foreach ($watch_items as $item) {
-    $fail = false;
+    $is_valid = false;
 
     try {
-        $fail = strlen(@file_get_contents($item->url)) === 0;
+        $is_valid = strlen(@file_get_contents($item->url)) > 0;
     } catch (Exception $exception) {
-        $fail = true;
+        $is_valid = false;
     }
 
-    if ($fail) {
-        $item->is_valid = false;
-        $item->save();
-    }
+    $item->is_valid = $is_valid;
+    
+    $item->save();
 
-    $success &= !$fail;
+    $success &= $is_valid;
 }
 
 CronResult::create([

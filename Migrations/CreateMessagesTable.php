@@ -15,7 +15,9 @@ class CreateMessagesTable {
                 $table->boolean("has_seen")->default(false)->index();
                 $table->timestamps();
             });
+            return true;
         }
+        return false;
     }
 
     public function down() {

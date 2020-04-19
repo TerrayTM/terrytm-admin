@@ -7,6 +7,7 @@ require_once(__DIR__ . "/../../Partials/RequestValidator.php");
 require_once(__DIR__ . "/../../Partials/DatabaseConnector.php");
 
 $redirect = "/dashboard.php";
+$response_data = [];
 
 switch ($_POST['request']) {
     case "deleteTask":
@@ -14,7 +15,8 @@ switch ($_POST['request']) {
 
         break;
     case "createTask":
-        Task::create(["text" => $_POST["text"]]);
+        $task = Task::create(["text" => $_POST['text']]);
+        $response_data['id'] = $task->id;
         
         break;
     case "deleteNote":
@@ -49,8 +51,12 @@ switch ($_POST['request']) {
         throw new Exception("Invalid request type.");
 }
 
-header("Location: " . $redirect);
+if (isset($_POST['async'])) {
+    require(__DIR__ . "/../../Helpers/Response.php");
 
-exit();
+    response_success($response_data);
+} else {
+    header("Location: " . $redirect);
+}
 
 ?>

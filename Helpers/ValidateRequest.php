@@ -18,7 +18,7 @@ if (!function_exists("validate_request")) {
                     }
 
                     break;
-                case "i":
+                case "n":
                     if (!is_numeric($item)) {
                         response_error("Invalid or missing parameters in request.");
                     }

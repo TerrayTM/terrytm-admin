@@ -16,7 +16,9 @@ class CreateProjectTagsTable {
                 $table->string("name", 32);
                 $table->string("color", 32);
             });
+            return true;
         }
+        return false;
     }
 
     public function down() {

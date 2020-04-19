@@ -26,6 +26,7 @@ function generate_link_id() {
 }
 
 $redirect = "/images.php";
+$response_data = [];
 
 switch($_POST['request']) {
     case "restore":
@@ -62,10 +63,10 @@ switch($_POST['request']) {
         
         for ($i = 0; $i < count($_FILES['images']['name']); ++$i) {
             $type = explode("/", $_FILES['images']['type'][$i])[1];
-            $file_name = str_replace(".", "", uniqid("image_", true)) . generate_token(9) . "." . $type;
+            $file_name = str_replace(".", "", uniqid("image-", true)) . generate_token(9) . "." . $type;
             $name = __DIR__ . "/../../../files/images/" . $_POST['id'] . "/" . $file_name;
 
-            move_uploaded_file($_FILES["images"]["tmp_name"][$i], $name);
+            move_uploaded_file($_FILES['images']['tmp_name'][$i], $name);
 
             if (file_exists($name)) {
                 Image::create([
@@ -95,8 +96,12 @@ switch($_POST['request']) {
         throw new Exception("Invalid request type.");
 }
 
-header("Location: " . $redirect);
+if (isset($_POST['async'])) {
+    require(__DIR__ . "/../../Helpers/Response.php");
 
-exit();
+    response_success($response_data);
+} else {
+    header("Location: " . $redirect);
+}
 
 ?>

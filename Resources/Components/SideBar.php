@@ -68,6 +68,24 @@ $page_name = basename($_SERVER['PHP_SELF']);
             <span>SSL</span>
         </a>
     </li>
+    <li class="nav-item <?php echo($page_name === "tools.php" ? "active" : ""); ?>">
+        <a class="nav-link" href="/tools.php">
+            <i class="fas fa-fw fa-tools"></i>
+            <span>Tools</span>
+        </a>
+    </li>
+    <li class="nav-item <?php echo($page_name === "pushes.php" ? "active" : ""); ?>">
+        <a class="nav-link" href="/pushes.php">
+            <i class="fas fa-fw fa-folder"></i>
+            <span>Pushes</span>
+        </a>
+    </li>
+    <li class="nav-item <?php echo($page_name === "builds.php" ? "active" : ""); ?>">
+        <a class="nav-link" href="/builds.php">
+            <i class="fas fa-fw fa-magic"></i>
+            <span>Builds</span>
+        </a>
+    </li>
     <hr class="sidebar-divider">
     <div class="sidebar-heading">
         Subdomains
@@ -82,6 +100,24 @@ $page_name = basename($_SERVER['PHP_SELF']);
         <a class="nav-link" target="_blank" href="https://myremindlist.terrytm.com">
             <i class="fas fa-fw fa-stopwatch"></i>
             <span>MyRemindList</span>
+        </a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" target="_blank" href="https://cloudcapture.terrytm.com">
+            <i class="fas fa-fw fa-cloud"></i>
+            <span>Cloud Capture</span>
+        </a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" target="_blank" href="https://network.terrytm.com">
+            <i class="fas fa-fw fa-network-wired"></i>
+            <span>Network</span>
+        </a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" target="_blank" href="https://pytimize.terrytm.com">
+            <i class="fas fa-fw fa-fire"></i>
+            <span>Pytimize</span>
         </a>
     </li>
     <li class="nav-item">

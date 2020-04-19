@@ -2,10 +2,6 @@
 
 $styles = '
   <style>
-    .center {
-      text-align: center;
-    }
-
     .text {
       border: 1px solid #ccc;
       outline: none;

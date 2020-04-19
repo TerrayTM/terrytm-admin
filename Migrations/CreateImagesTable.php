@@ -18,7 +18,9 @@ class CreateImagesTable {
                 $table->boolean("is_deleted")->default(false)->index();
                 $table->timestamps();
             });
+            return true;
         }
+        return false;
     }
 
     public function down() {

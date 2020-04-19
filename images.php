@@ -2,10 +2,6 @@
 
 $styles = '
   <style>
-    .center {
-      text-align: center;
-    }
-
     .full-width {
       width: 100%;
     }
@@ -209,8 +205,8 @@ require_once(__DIR__ . "/Partials/DatabaseConnector.php");
       function renameGroup(event, id) {
         event.preventDefault();
         const element = document.getElementById(`A${id}`);
-        if (element && element.innerHTML && id !== '-1') {
-          postRequest('/Controllers/Admin/Images.php', 'rename', { id, name: element.innerHTML });
+        if (element && element.innerText.trim() && id !== '-1') {
+          postRequest('/Controllers/Admin/Images.php', 'rename', { id, name: element.innerText.trim() });
         }
       }
 

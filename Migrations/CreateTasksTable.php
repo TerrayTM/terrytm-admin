@@ -11,7 +11,9 @@ class CreateTasksTable {
                 $table->increments("id");
                 $table->string("text", 256);
             });
+            return true;
         }
+        return false;
     }
 
     public function down() {

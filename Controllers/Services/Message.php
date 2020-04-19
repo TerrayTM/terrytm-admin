@@ -16,7 +16,7 @@ Message::create([
     "message" => $_POST['message']
 ]);
 
-if (!send_email(config("email"), $_POST['email'], "Name: " . $_POST['name'] . "\nEmail: " . $_POST['email'] . "\n\nMessage:\n" . $_POST['message'])) {
+if (!send_email(config("email"), config("email"), "Name: " . $_POST['name'] . "<br>Email: " . $_POST['email'] . "<br><br>Message:<br>" . $_POST['message'])) {
     response_error("Message failed to send.");
 }
 

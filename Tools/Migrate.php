@@ -7,6 +7,7 @@ if (!isset($_SERVER['REQUEST_METHOD'])) {
 
     $migrated_classes = [];
     $deferred_migrations = [];
+    $skipped = 0;
 
     foreach (scandir(__DIR__ . "/../Migrations") as $migration) {
         $path = __DIR__ . "/../Migrations/" . $migration;
@@ -24,11 +25,13 @@ if (!isset($_SERVER['REQUEST_METHOD'])) {
 
             $migrationClass = new $migration(Capsule::class);
 
-            $migrationClass->up();
+            if ($migrationClass->up()) {
+                echo($migration . " migrated successfully.\n");
+            } else {
+                ++$skipped;
+            }
             
             $migrated_classes[] = $migration;
-
-            echo($migration . " migrated successfully.\n");
         }
     }
 
@@ -38,9 +41,11 @@ if (!isset($_SERVER['REQUEST_METHOD'])) {
         if (in_array($migration::$required_migration, $migrated_classes)) {
             $migrationClass = new $migration(Capsule::class);
 
-            $migrationClass->up();
-
-            echo($migration . " migrated successfully.\n");
+            if ($migrationClass->up()) {
+                echo($migration . " migrated successfully.\n");
+            } else {
+                ++$skipped;
+            }
 
             ++$counter;
         }
@@ -48,6 +53,12 @@ if (!isset($_SERVER['REQUEST_METHOD'])) {
 
     if ($counter !== count($deferred_migrations)) {
         echo("An error has occurred.");
+    }
+
+    echo("\nMigration complete!\n");
+    
+    if ($skipped > 0) {
+        echo("Skipped: " . $skipped);
     }
 }
 
