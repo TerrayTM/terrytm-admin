@@ -1,7 +1,13 @@
 <?php
 
 if (!function_exists("send_email")) {
-    function send_email($destination, $from, $message, $subject = "Message") {
+    function send_email($destination, $from, $message, $subject = "Message", $sanitize = false) {
+        if ($sanitize) {
+            $from = htmlspecialchars(strip_tags($from));
+            $message = nl2br(htmlspecialchars(strip_tags($message)));
+            $subject = htmlspecialchars(strip_tags($subject));
+        }
+
         $headers = "From: " . $from . "\n";
         $headers .= "Return-Path: " . $from . "\n";
         $headers .= "Reply-To: " . $from . "\n";

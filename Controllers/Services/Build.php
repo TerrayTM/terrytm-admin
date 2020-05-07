@@ -1,10 +1,10 @@
 <?php
 
+validate_request($_POST, [["success", "s"]]);
+
 require_once(__DIR__ . "/../../Partials/DatabaseConnector.php");
 require_once(__DIR__ . "/../../Helpers/SendEmail.php");
 require_once(__DIR__ . "/../../Config/Config.php");
-
-validate_request($_POST, [["success", "s"]]);
 
 if ($_POST['success'] !== "true") {
     validate_request($_POST, [
@@ -87,7 +87,7 @@ if (!$build->is_successful) {
     $query = "Build-Failing-Red";
 }
 
-file_put_contents(__DIR__ . "/../../../files/" . $push->repository . "-build.svg", file_get_contents("https://img.shields.io/badge/" . $query));
+file_put_contents(__DIR__ . "/../../../files/badges/" . $push->repository . ".svg", file_get_contents("https://img.shields.io/badge/" . $query));
 
 response_success();
 

@@ -41,9 +41,14 @@ require_once(__DIR__ . "/Resources/Components/Header.php");
                       <td class="center"><a href="#" onClick="execute(event, 'job')"><span class="fa fa-play"></span></a></td>
                     </tr>
                     <tr>
-                      <td>Ping URL</td>
+                      <td>Ping Test</td>
                       <td contenteditable spellcheck="false" id="ping">{"url": "https://terrytm.com"}</td>
                       <td class="center"><a href="#" onClick="execute(event, 'ping')"><span class="fa fa-play"></span></a></td>
+                    </tr>
+                    <tr>
+                      <td>Discover IP</td>
+                      <td contenteditable spellcheck="false" id="address">{"cloudflare": "true"}</td>
+                      <td class="center"><a href="#" onClick="execute(event, 'address')"><span class="fa fa-play"></span></a></td>
                     </tr>
                   </tbody>
                 </table>

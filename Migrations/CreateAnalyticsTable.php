@@ -9,10 +9,11 @@ class CreateAnalyticsTable {
         if (!$this->capsule::schema()->hasTable("analytics")) {
             $this->capsule::schema()->create("analytics", function ($table) {
                 $table->increments("id");
-                $table->string("url", 256);
-                $table->string("address", 128);
+                $table->string("url", 128);
+                $table->string("address", 64)->nullable();
                 $table->string("group", 32);
                 $table->boolean("is_error")->index();
+                $table->boolean("is_self")->index();
                 $table->timestamp("timestamp")->useCurrent();
             });
             return true;

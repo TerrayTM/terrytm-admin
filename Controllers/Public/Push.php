@@ -1,14 +1,5 @@
 <?php
 
-header("Access-Control-Allow-Origin: *");
-
-require_once(__DIR__ . "/../../Helpers/Response.php");
-require_once(__DIR__ . "/../../Config/Config.php");
-
-if ($_SERVER['REQUEST_METHOD'] !== "POST") {
-    response_error("Invalid request method.");
-}
-
 if (!isset($_SERVER['HTTP_X_HUB_SIGNATURE'])) {
     response_error("Signature is required.");
 }
@@ -22,6 +13,8 @@ if (count($parts) != 2) {
 $algorithm = $parts[0];
 $hash = $parts[1];
 $raw = file_get_contents("php://input");
+
+require_once(__DIR__ . "/../../Config/Config.php");
 
 if (!hash_equals($hash, hash_hmac($algorithm, $raw, config("github_secret")))) {
     response_error("Signature is invalid.");

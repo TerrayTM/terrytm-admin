@@ -3,7 +3,6 @@
 require_once(__DIR__ . "/Partials/Authenticator.php");
 require_once(__DIR__ . "/Resources/Components/Header.php");
 require_once(__DIR__ . "/Partials/DatabaseConnector.php");
-
 ?>
 
 <body id="page-top">
@@ -42,7 +41,7 @@ require_once(__DIR__ . "/Partials/DatabaseConnector.php");
                           <tr' . ($group[0]->is_error ? ' style="background-color: #eee;"' : '') .'>
                             <td>' . $url . '</td>
                             <td>' . $group->count() . '</td>
-                            <td>' . $group->groupBy("group")->count() . '</td>
+                            <td>' . $group->groupBy("address")->count() . '</td>
                             <td class="center"><a href="#" onClick="deleteRow(event, \'' . $url . '\')"><span class="fa fa-trash"></span></a></td>
                           </tr>
                         ');
@@ -61,6 +60,8 @@ require_once(__DIR__ . "/Partials/DatabaseConnector.php");
             <div class="card-body">
               <p>Visits from Facebook: <?php echo(Analytics::where("group", "Facebook")->count()); ?></p>
               <p>Visits from Resume: <?php echo(Analytics::where("group", "Resume")->count()); ?></p>
+              <p>Visits from LinkedIn: <?php echo(Analytics::where("group", "LinkedIn")->count()); ?></p>
+              <p>Visits from Self: <?php echo(Analytics::where("is_self", true)->count()); ?></p>
             </div>
           </div>
         </div>

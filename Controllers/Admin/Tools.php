@@ -31,14 +31,12 @@ switch($_POST['request']) {
             ["url", "s"]
         ]);
 
-        try{
-            if (strlen(file_get_contents($_POST['url'])) === 0) {
-                $response_data['output'] = "Ping failed! No response received.";
-            } else {
-                $response_data['output'] = "Ping success!";
-            }
-        } catch (Exception $exception) {
-            $response_data['output'] = $exception->getMessage();
+        require_once(__DIR__ . "/../../Helpers/PingTest.php");
+
+        if (ping_test($_POST['url'])) {
+            $response_data['output'] = "Ping success!";
+        } else {
+            $response_data['output'] = "Ping failed! No response received.";
         }
 
         break;
@@ -66,6 +64,16 @@ switch($_POST['request']) {
             }
     
             break;
+    case "address":
+        validate_request($_POST, [
+            ["cloudflare", "s"]
+        ]);
+
+        require(__DIR__ . "/../../Helpers/GetAddress.php");
+
+        $response_data['output'] = get_address($_POST['cloudflare'] === "true");
+        
+        break;
     default:
         throw new Exception("Invalid request type.");
 }

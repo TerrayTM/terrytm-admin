@@ -1,12 +1,5 @@
 <?php
 
-$debug = false;
-
-if (isset($debug) && $debug) {
-    header("Access-Control-Allow-Origin: *");
-    header("Access-Control-Allow-Headers: API-Token, API-Test-Token, API-Route");
-}
-
 require_once(__DIR__ . "/Partials/RequestValidator.php");
 require_once(__DIR__ . "/Helpers/ValidateRequest.php");
 
@@ -26,7 +19,7 @@ if (isset($_SERVER['HTTP_API_ROUTE'])) {
         default: response_error("Invalid API route.");
     }
 } else {
-    response_error("Missing request route header.");
+    http_response_code(404);
 }
 
 ?>

@@ -1,21 +1,16 @@
 <?php
 
 require_once(__DIR__ . "/../Partials/DatabaseConnector.php");
+require_once(__DIR__ . "/../Helpers/PingTest.php");
 
 $watch_items = SSL::all();
 $success = true;
 
 foreach ($watch_items as $item) {
-    $is_valid = false;
-
-    try {
-        $is_valid = strlen(@file_get_contents($item->url)) > 0;
-    } catch (Exception $exception) {
-        $is_valid = false;
-    }
+    $is_valid = ping_test($item->url);
 
     $item->is_valid = $is_valid;
-    
+
     $item->save();
 
     $success &= $is_valid;

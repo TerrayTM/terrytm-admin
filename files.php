@@ -44,7 +44,7 @@ require_once(__DIR__ . "/Resources/Components/Header.php");
                       <?php
 
                         $path = __DIR__ . "/../files";
-                        $files = @array_diff(@scandir($path), [".", "..", "images"]);
+                        $files = @array_diff(@scandir($path), [".", "..", "images", "badges"]);
 
                         if ($files) {
                           foreach ($files as $file) {

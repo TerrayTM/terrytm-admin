@@ -15,10 +15,29 @@ require_once(__DIR__ . "/Partials/DatabaseConnector.php");
         <div class="container-fluid">
           <div class="card shadow mb-4">
             <div class="card-header py-3">
-              <h6 class="m-0 font-weight-bold text-primary">Projects</h6>
+              <h6 class="m-0 font-weight-bold text-primary">Posts</h6>
             </div>
             <div class="card-body">
-              <div id="editorContainer"></div>
+              <div>
+                <?php
+
+                  $posts = Blog::all();
+
+                  foreach ($posts as $post) {
+                    echo('<div><a>' . $post->name . "</a></div>");
+                  }
+
+                ?>
+              </div>
+            </div>
+          </div>
+          <div class="card shadow mb-4">
+            <div class="card-header py-3">
+              <h6 class="m-0 font-weight-bold text-primary">Editor</h6>
+            </div>
+            <div class="card-body">
+              <div id="editorContainer" style="border: 20px solid #d5e6f3; border-radius: 10px; width: 850px; margin: auto; padding: 60px 0;"></div>
+              <button onclick="save()">save</button>
             </div>
           </div>
         </div>
@@ -37,9 +56,13 @@ require_once(__DIR__ . "/Partials/DatabaseConnector.php");
     <?php require_once(__DIR__ . "/Resources/Components/Footer.php"); ?>
     <?php require_once(__DIR__ . "/Resources/Components/Editor.php"); ?>
     <script>
-      function deleteRow(event, id) {
-        event.preventDefault();
-        postRequest('/Controllers/Admin/Projects.php', 'delete', { id });
+      async function save() {
+        try {
+          const content = await editor.save();
+          console.log(content);
+        } catch (error) {
+          console.log(error);
+        }
       }
     </script>
 </body>
