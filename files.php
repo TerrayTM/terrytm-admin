@@ -22,91 +22,84 @@ require_once(__DIR__ . "/Resources/Components/Header.php");
         <?php require_once(__DIR__ . "/Resources/Components/HeadBar.php"); ?>
         <div class="container-fluid">
         <div class="d-sm-flex align-items-center justify-content-between mb-4">
-            <h1 class="h3 mb-2 text-gray-800">Manage Files</h1>
-            <a href="#" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"><i class="fas fa-download fa-sm text-white-50"></i> Download Table</a>
+          <h1 class="h3 mb-2 text-gray-800">Manage Files</h1>  
+        </div>
+        <div class="card shadow mb-4">
+          <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">Files</h6>
           </div>
-          <div class="card shadow mb-4">
-            <div class="card-header py-3">
-              <h6 class="m-0 font-weight-bold text-primary">Files</h6>
-            </div>
-            <div class="card-body">
-              <div class="table-responsive">
-                  <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
-                    <thead>
-                      <tr>
-                        <th>Name</th>
-                        <th>URL</th>
-                        <th>File Size</th>
-                        <th>Delete</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <?php
+          <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                  <thead>
+                    <tr>
+                      <th>Name</th>
+                      <th>URL</th>
+                      <th>File Size</th>
+                      <th>Delete</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <?php
 
-                        $path = __DIR__ . "/../files";
-                        $files = @array_diff(@scandir($path), [".", "..", "images", "badges"]);
+                    $path = __DIR__ . "/../files";
+                    $files = @array_diff(@scandir($path), [".", "..", "images", "badges"]);
 
-                        if ($files) {
-                          foreach ($files as $file) {
-                            echo('
-                              <tr>
-                                <td>' . $file . '</td>
-                                <td><a href="https://terrytm.com/files/' . $file . '" target="_blank">https://terrytm.com/files/' . $file . '</a></td>
-                                <td>' . filesize($path . "/" . $file) . '</td>
-                                <td class="center"><a href="#" onClick="deleteFile(event, \'' . $file . '\')"><span class="fa fa-trash"></span></a></td>
-                              </tr>
-                            ');
-                          }
-                        }
+                    if ($files) {
+                      foreach ($files as $file) {
+                        echo('
+                          <tr>
+                            <td>' . $file . '</td>
+                            <td><a href="https://terrytm.com/files/' . rawurlencode($file) . '" target="_blank">https://terrytm.com/files/' . rawurlencode($file) . '</a></td>
+                            <td>' . filesize($path . "/" . $file) . '</td>
+                            <td class="center"><a href="#" onClick="deleteFile(event, \'' . $file . '\')"><span class="fa fa-trash"></span></a></td>
+                          </tr>
+                        ');
+                      }
+                    }
 
-                      ?>
-                      <tr>
-                        <td>Create</td>
-                        <td></td>
-                        <td></td>
-                        <td class="center"><a href="#" onClick="create(event)"><span class="fa fa-save"></span></a></td>
-                        <form id="uploadForm" action="/Controllers/Admin/Files.php" method="post" enctype="multipart/form-data">
-                          <?php echo($token_input); ?>
-                          <input type="hidden" name="request" value="create">
-                          <input type="file" name="file" style="display: none;" id="uploadInput" onChange="onUpload()">
-                        </form>
-                      </tr>
-                    </tbody>
-                  </table>
-                </div>
+                    ?>
+                    <tr>
+                      <td>Create</td>
+                      <td></td>
+                      <td></td>
+                      <td class="center"><a href="#" onClick="create(event)"><span class="fa fa-save"></span></a></td>
+                      <form id="uploadForm" action="/Controllers/Admin/Files.php" method="post" enctype="multipart/form-data">
+                        <?php echo($token_input); ?>
+                        <input type="hidden" name="request" value="create">
+                        <input type="file" name="file" style="display: none;" id="uploadInput" onChange="onUpload()">
+                      </form>
+                    </tr>
+                  </tbody>
+                </table>
               </div>
             </div>
           </div>
         </div>
-        <footer class="sticky-footer bg-white">
-          <div class="container my-auto">
-            <div class="copyright text-center my-auto">
-              <span>Copyright &copy; Terry™ 2019</span>
-            </div>
-          </div>
-        </footer>
       </div>
+      <?php require_once(__DIR__ . "/Resources/Components/Footer.php"); ?>
     </div>
-    <a class="scroll-to-top rounded" href="#page-top">
-      <i class="fas fa-angle-up"></i>
-    </a>
-    <?php require_once(__DIR__ . "/Resources/Components/Footer.php"); ?>
-    <script>
-      function onUpload() {
-        if (document.getElementById('uploadInput').files.length > 0) {
-          document.getElementById('uploadForm').submit();
-        }
+  </div>
+  <a class="scroll-to-top rounded" href="#page-top">
+    <i class="fas fa-angle-up"></i>
+  </a>
+  <?php require_once(__DIR__ . "/Resources/Components/Scripts.php"); ?>
+  <script>
+    function onUpload() {
+      if (document.getElementById('uploadInput').files.length > 0) {
+        document.getElementById('uploadForm').submit();
       }
-                        
-      function create(event) {
-        event.preventDefault();
-        document.getElementById('uploadInput').click();
-      }
+    }
+                      
+    function create(event) {
+      event.preventDefault();
+      document.getElementById('uploadInput').click();
+    }
 
-      function deleteFile(event, name) {
-        event.preventDefault();
-        postRequest('/Controllers/Admin/Files.php', 'delete', { name });
-      }
-    </script>
+    function deleteFile(event, name) {
+      event.preventDefault();
+      postRequest('/Controllers/Admin/Files.php', 'delete', { name });
+    }
+  </script>
 </body>
 </html>

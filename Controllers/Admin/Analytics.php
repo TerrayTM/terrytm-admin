@@ -12,6 +12,12 @@ switch($_POST['request']) {
         Analytics::where("url", $_POST['url'])->delete();
 
         break;
+    case "download":
+        require(__DIR__ . "/../../Helpers/DownloadCSV.php");
+
+        download_csv(Analytics::class);
+
+        return;
     default:
         throw new Exception("Invalid request type.");
 }

@@ -15,7 +15,7 @@ class Push extends Eloquent {
         if ($this->is_built) {
             $status = !$this->build ? "Building" : "Built";
         } else {
-            $status = "Normal";
+            $status = "Inactive";
         }
 
         return $status;

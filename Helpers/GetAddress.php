@@ -10,8 +10,8 @@ if (!function_exists("get_address")) {
                 if ($response) {
                     foreach (explode("\n", $response) as $line) {
                         $parts = explode("=", $line);
-                        
-                        if ($parts[0] == "ip") {
+
+                        if ($parts[0] === "ip") {
                             $address = $parts[1];
 
                             break;

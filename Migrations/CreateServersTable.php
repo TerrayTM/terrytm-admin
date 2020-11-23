@@ -10,6 +10,7 @@ class CreateServersTable {
             $this->capsule::schema()->create("servers", function ($table) {
                 $table->increments("id");
                 $table->string("url", 128);
+                $table->boolean("allow_proxy")->default(false)->index();
             });
             return true;
         }

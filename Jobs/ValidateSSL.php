@@ -1,13 +1,13 @@
 <?php
 
+require_once(__DIR__ . "/../Helpers/SSLTest.php");
 require_once(__DIR__ . "/../Partials/DatabaseConnector.php");
-require_once(__DIR__ . "/../Helpers/PingTest.php");
 
 $watch_items = SSL::all();
 $success = true;
 
 foreach ($watch_items as $item) {
-    $is_valid = ping_test($item->url);
+    $is_valid = ssl_test($item->url);
 
     $item->is_valid = $is_valid;
 
@@ -17,7 +17,7 @@ foreach ($watch_items as $item) {
 }
 
 CronResult::create([
-    "type" => CronType::$VALIDATE_SSL,
+    "type" => CronType::$ValidateSSL,
     "is_successful" => $success
 ]);
 

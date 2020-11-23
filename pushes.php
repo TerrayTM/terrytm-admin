@@ -15,6 +15,7 @@ require_once(__DIR__ . "/Partials/DatabaseConnector.php");
         <div class="container-fluid">
           <div class="d-sm-flex align-items-center justify-content-between mb-4">
             <h1 class="h3 mb-2 text-gray-800">Manage Pushes</h1>
+            <a href="#" onClick="downloadTable()" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"><i class="fas fa-download fa-sm text-white-50"></i> Download Table</a>
           </div>
           <div class="card shadow mb-4">
             <div class="card-header py-3">
@@ -27,7 +28,7 @@ require_once(__DIR__ . "/Partials/DatabaseConnector.php");
                     <tr>
                       <th>ID</th>
                       <th>Repository</th>
-                      <th>Url</th>
+                      <th>URL</th>
                       <th>User</th>
                       <th>Email</th>
                       <th>Timestamp</th>
@@ -37,41 +38,51 @@ require_once(__DIR__ . "/Partials/DatabaseConnector.php");
                   <tbody>
                     <?php
 
-                      $pushes = Push::orderBy("created_at", "DESC")->limit(20)->get();
+                    $pushes = Push::orderBy("created_at", "DESC")->limit(20)->get();
 
-                      foreach ($pushes as $push) {
-                        echo('
-                          <tr>
-                            <td>' . $push->id . '</td>
-                            <td>' . $push->repository . '</td>
-                            <td>' . $push->url . '</td>
-                            <td>' . $push->user . '</td>
-                            <td>' . ($push->email ?? "None") . '</td>
-                            <td>' . $push->created_at . '</td>       
-                            <td>' . $push->status() . '</td>
-                          </tr>
-                        ');
-                      }
+                    foreach ($pushes as $push) {
+                      echo('
+                        <tr>
+                          <td>' . $push->id . '</td>
+                          <td>' . $push->repository . '</td>
+                          <td>' . $push->url . '</td>
+                          <td>' . $push->user . '</td>
+                          <td>' . ($push->email ?? "None") . '</td>
+                          <td>' . $push->created_at . '</td>       
+                          <td>' . $push->status() . '</td>
+                        </tr>
+                      ');
+                    }
                       
                     ?>
                   </tbody>
                 </table>
+                <?php 
+
+                if ($pushes->count() === 0) {
+                  echo('
+                    <div class="card bg-success text-white shadow">
+                      <div class="card-body">No pushes to display.</div>
+                    </div>
+                  ');
+                }
+
+                ?>
               </div>
             </div>
           </div>
         </div>
       </div>
-      <footer class="sticky-footer bg-white">
-        <div class="container my-auto">
-          <div class="copyright text-center my-auto">
-            <span>Copyright &copy; Terry™ 2019</span>
-          </div>
-        </div>
-      </footer>
+      <?php require_once(__DIR__ . "/Resources/Components/Footer.php"); ?>
     </div>
     <a class="scroll-to-top rounded" href="#page-top">
       <i class="fas fa-angle-up"></i>
     </a>
-    <?php require_once(__DIR__ . "/Resources/Components/Footer.php"); ?>
+    <?php require_once(__DIR__ . "/Resources/Components/Scripts.php"); ?>
+    <script>
+      function downloadTable() {
+        postRequest('/Controllers/Admin/Pushes.php', 'download');
+      }
+    </script>
 </body>
 </html>

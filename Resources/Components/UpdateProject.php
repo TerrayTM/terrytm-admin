@@ -6,6 +6,10 @@ if (isset($_GET['edit'])) {
   $project = Project::find($_GET['edit']);
 }
 
+$technology_options = json_encode(ProjectTechnology::select("technology")->distinct()->get()->pluck("technology")->toArray());
+$tag_values = json_encode(ProjectTag::select("name")->distinct()->get()->pluck("name")->toArray());
+$tag_colors = json_encode(ProjectTag::select("color")->distinct()->get()->pluck("color")->toArray());
+
 ?>
 
 <div class="d-sm-flex align-items-center justify-content-between mb-4">
@@ -13,7 +17,7 @@ if (isset($_GET['edit'])) {
 </div>
 <div class="card shadow mb-4">
   <div class="card-header py-3">
-    <h6 class="m-0 font-weight-bold text-primary"><?php echo($project->name ?? "Create Project"); ?></h6>
+    <h6 class="m-0 font-weight-bold text-primary"><?php echo($project->name ?? "Create Project"); ?> (Basic Info)</h6>
   </div>
   <div class="card-body">
     <form action="/Controllers/Admin/Projects.php" method="post">
@@ -48,73 +52,88 @@ if (isset($_GET['edit'])) {
         <input class="form-control" type="text" name="link" value="<?php echo($project->link ?? ""); ?>">
       </div>
       <div class="form-group">
-        <label>Technologies</label>
-        <?php 
-        
-        if ($project) {
-          $technologies = $project->technologies;
-          $added = false;
-
-          foreach ($technologies as $technology) {
-            if (!$added) {
-              echo('<div class="form-group">');
-              
-              $added = true;
-            }
-            echo('<div class="btn btn-info" style="cursor: pointer;">' . $technology->technology . '</div>');
-          }
-
-          if ($added) {
-            echo('</div>');
-          }
-        }
-
-        ?>
-        <div class="input-group mb-2 mr-sm-2">
-          <input class="form-control" type="text" name="technology">
-          <div class="input-group-append">
-            <div class="input-group-text" style="cursor: pointer;">+</div>
-          </div>
-        </div>
-      </div>
-      <div class="form-group">
-        <label>Images</label>
-        <?php
-        
-        if ($project) {
-          $images = $project->images;
-          $added = false;
-          
-          foreach ($images as $image) {
-            if (!$added) {
-              echo('<div class="form-group" style="display: flex; overflow-x: auto; border: 1px solid #ccc; border-radius: 6px;">');
-              
-              $added = true;
-            }
-
-            echo('
-              <div style="margin: 8px; border: 1px solid #ccc; padding: 8px; border-radius: 6px;">
-                <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
-                  <input type="number" value="' . $image->order . '" style="margin-right: 8px;" class="form-control">
-                  <div class="btn btn-info" style="cursor: pointer;">X</div>
-                </div>
-                <img src="' . $image->url . '" alt="Project Image" style="width: 240px;">
-              </div>
-            ');
-          }
-          
-          if ($added) {
-            echo('</div>');
-          }
-        }
-
-        ?>
-        <br>
-        <input class="form-control" type="text" name="link" value="<?php echo($project->link ?? ""); ?>">
-      </div>
-      <div class="form-group">
         <input class="btn btn-primary" type="submit">
       </div>
+    </form>
+  </div>
+</div>
+<div class="card shadow mb-4">
+  <div class="card-header py-3">
+    <h6 class="m-0 font-weight-bold text-primary"><?php echo($project->name ?? "Create Project"); ?> (Associated Info)</h6>
+  </div>
+  <div class="card-body">
+    <div class="form-group">
+      <label>Technologies</label>
+      <div class="form-group technology-container" style="display: none;">
+        <?php
+
+        if ($project) {
+          foreach ($project->technologies as $technology) {
+            echo('<button class="btn btn-info tag" onClick="deleteTechnology(event, ' .  $technology->id . ')">' . $technology->technology . '<span class="fa fa-trash"></span></button>');
+          }
+        }
+
+        ?>
+      </div>
+      <div class="input-group mb-2 mr-sm-2">
+        <input placeholder="Technology" class="form-control" type="text" id="technology">
+        <div class="input-group-append">
+          <button class="input-group-text btn btn-info" <?php echo($project ? '' : 'disabled') ?> onClick="createTechnology(event, <?php echo($project ? $project->id : 'null') ?>)">Add</button>
+        </div>
+      </div>
+    </div>
+    <div class="form-group">
+      <label>Tags</label>
+      <div class="form-group tag-container" style="display: none;">
+        <?php
+
+        if ($project) {
+          foreach ($project->tags as $tag) {
+            echo('<button class="btn btn-info tag" style="background-color: '. $tag->color .';" onClick="deleteTag(event, ' .  $tag->id . ')">' . $tag->name . '<span class="fa fa-trash"></span></button>');
+          }
+        }
+
+        ?>
+      </div>
+      <div class="input-group mb-2 mr-sm-2">
+        <input placeholder="Value" class="form-control" type="text" id="tagValue">
+        <input placeholder="Color" class="form-control" type="text" id="tagColor">
+        <div class="input-group-append">
+          <button class="input-group-text btn btn-info" <?php echo($project ? '' : 'disabled') ?> onClick="createTag(event, <?php echo($project ? $project->id : 'null') ?>)">Add</button>
+        </div>
+      </div>
+    </div>
+    <div class="form-group">
+      <label>Images</label>
+      <ul id="image-container">
+        <?php
+
+        $images = [];
+
+        if ($project) {
+          $images = $project->images()->orderBy("order")->get();
+
+          foreach ($images as $image) {
+            echo('
+              <li class="ui-state-default" id="I' . $image->id . '">
+                <button onClick="deleteImage(event, ' .  $image->id . ')">&times;</button>
+                <img src="' . $image->url . '" alt="Project Image" style="width: 100%;">
+              </li>
+            ');
+          }
+        }
+
+        ?>
+      </ul>
+      <br>
+      <button class="btn btn-success" <?php echo($project ? '' : 'disabled') ?> onClick="uploadImages(<?php echo($project ? $project->id : 'null') ?>)">Upload Images</button>
+      <button class="btn btn-info" <?php echo($project && count($images) > 0 ? '' : 'disabled') ?> onClick="saveImageOrder(<?php echo($project ? $project->id : 'null') ?>)">Save Image Order</button>
+    </div>
+    <form action="/Controllers/Admin/Projects.php" method="post" id="upload" style="display: none;" enctype="multipart/form-data">
+      <?php echo($token_input); ?>
+      <input type="hidden" name="request" value="upload">
+      <input type="hidden" id="id" name="id" value="-1">
+      <input type="file" id="images" name="images[]" onChange="postUpload()" multiple accept="image/*">
     </form>
   </div>
 </div>

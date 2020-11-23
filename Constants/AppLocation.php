@@ -1,11 +1,12 @@
 <?php
 
 class AppLocation {
-    public static $ERROR_LOGS = [
-        "https://terrytm.com/error_log", 
-        "https://api.terrytm.com/error_log",
-        "https://api.terrytm.com/Controllers/Admin/error_log",
-        "https://api.terrytm.com/Controllers/Services/error_log"
+    public static $error_logs = [
+        __DIR__ . "/../../error_log", 
+        __DIR__ . "/../error_log",
+        __DIR__ . "/../Controllers/Admin/error_log",
+        __DIR__ . "/../Controllers/Services/error_log",
+        __DIR__ . "/../Controllers/Public/error_log"
     ];
 }
 

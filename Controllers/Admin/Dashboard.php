@@ -28,7 +28,7 @@ switch ($_POST['request']) {
 
         break;
     case "editNote":
-        $note = Note::find($_POST['id'])->update(["note" =>  $_POST['note']]);
+        Note::find($_POST['id'])->update(["note" => $_POST['note']]);
 
         break;
     case "deleteAnalytics":
@@ -45,6 +45,48 @@ switch ($_POST['request']) {
         header("Location: " . $_POST['back']);
 
         exit();
+
+        break;
+
+    case "deleteError":
+        if (is_file($_POST['location'])) {
+            unlink($_POST['location']);
+        }
+
+        break;
+    case "createAccount":
+        Account::create([
+            "name" => $_POST['name'],
+            "username" => $_POST['username'],
+            "password" => $_POST['password']
+        ]);
+
+        break;
+    case "deleteAccount":
+        Account::find($_POST['id'])->delete();
+
+        break;
+    case "validateMaster":
+        require_once(__DIR__ . "/../../Config/Config.php");
+
+        $response_data['valid'] = hash_equals(config("master_hash"), $_POST['hash']);
+
+        break;
+    case "checkErrors":
+        $output = [];
+
+        foreach (AppLocation::$error_logs as $location) {
+            if (is_file($location)) {
+                $content = file_get_contents($location);
+
+                $output[] = [
+                    "location" => $location,
+                    "content" => $content
+                ];
+            }
+        }
+        
+        $response_data['errors'] = $output;
 
         break;
     default:

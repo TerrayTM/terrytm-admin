@@ -1,7 +1,7 @@
 <?php
 
-require_once(__DIR__ . "/../Partials/DatabaseConnector.php");
 require_once(__DIR__ . "/../Helpers/WakeServer.php");
+require_once(__DIR__ . "/../Partials/DatabaseConnector.php");
 
 $urls = Server::select("url")->get()->pluck("url")->toArray();
 
@@ -24,7 +24,7 @@ foreach ($urls as $url) {
 }
 
 CronResult::create([
-    "type" => CronType::$WAKE_SERVER,
+    "type" => CronType::$WakeServer,
     "is_successful" => $success
 ]);
 

@@ -53,6 +53,6 @@ require_once(__DIR__ . "/Resources/Components/Header.php");
     </div>
     </div>
   </div>
-  <?php require_once(__DIR__ . "/Resources/Components/Footer.php"); ?>
+  <?php require_once(__DIR__ . "/Resources/Components/Scripts.php"); ?>
 </body>
 </html>

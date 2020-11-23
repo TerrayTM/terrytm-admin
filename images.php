@@ -108,13 +108,13 @@ require_once(__DIR__ . "/Partials/DatabaseConnector.php");
             <div class="card-body">
               <?php 
                 
-                if (isset($_GET['error'])) {
-                  echo('
-                    <div class="card bg-danger text-white shadow" style="margin-bottom: 24px;">
-                      <div class="card-body">Operation failed! Please try again later.</div>
-                    </div>
-                  ');
-                }
+              if (isset($_GET['error'])) {
+                echo('
+                  <div class="card bg-danger text-white shadow" style="margin-bottom: 24px;">
+                    <div class="card-body">Operation failed! Please try again later.</div>
+                  </div>
+                ');
+              }
               
               ?>
               <div class="table-responsive">
@@ -135,25 +135,25 @@ require_once(__DIR__ . "/Partials/DatabaseConnector.php");
                   <tbody>
                     <?php
 
-                      $image_groups = ImageGroup::orderBy("id", "DESC")->get();
+                    $image_groups = ImageGroup::orderBy("id", "DESC")->get();
 
-                      foreach ($image_groups as $image_group) {
-                        $disabled = $image_group->is_deleted;
+                    foreach ($image_groups as $image_group) {
+                      $disabled = $image_group->is_deleted;
 
-                        echo('
-                          <tr' . ($disabled ? ' style="background-color: #eee;"' : '') . '>
-                            <td><a href="' . $image_group->url() . '" target="_blank">' . $image_group->id . '</a></td>
-                            <td contenteditable id="A' . $image_group->id . '">' . $image_group->name . '</td>
-                            <td>' . $image_group->date . '</td>
-                            <td>' . $image_group->images()->count() . '</td>
-                            <td class="center' . ($disabled ? ' disabled' : '') . '"><a href="#" onClick="upload(event, \'' . ($disabled ? -1 : $image_group->id) . '\')"><span class="fa fa-upload"></span></a></td>
-                            <td class="center"><a href="' . $image_group->admin_url() . '" target="_blank"><span class="fa fa-link"></span></a></td>
-                            <td class="center' . ($disabled ? ' disabled' : '') . '"><a href="#" onClick="renameGroup(event, \'' . ($disabled ? -1 : $image_group->id) . '\')"><span class="fa fa-edit"></span></a></td>
-                            <td class="center' . ($disabled ? ' disabled' : '') . '"><a href="#" onClick="refreshGroup(event, \'' . ($disabled ? -1 : $image_group->id) . '\')"><span class="fa fa-sync"></span></a></td>
-                            <td class="center"><a href="#" onClick="' . ($disabled ? 'restoreGroup' : 'deleteGroup') . '(event, \'' . $image_group->id . '\')"><span class="fa fa-trash' . ($disabled ? '-restore' : '') . '"></span></a></td>
-                          </tr>
-                        ');
-                      }
+                      echo('
+                        <tr' . ($disabled ? ' style="background-color: #eee;"' : '') . '>
+                          <td><a href="' . $image_group->url() . '" target="_blank">' . $image_group->id . '</a></td>
+                          <td contenteditable spellcheck="false" id="A' . $image_group->id . '">' . $image_group->name . '</td>
+                          <td>' . $image_group->date . '</td>
+                          <td>' . $image_group->images()->count() . '</td>
+                          <td class="center' . ($disabled ? ' disabled' : '') . '"><a href="#" onClick="upload(event, \'' . ($disabled ? -1 : $image_group->id) . '\')"><span class="fa fa-upload"></span></a></td>
+                          <td class="center"><a href="' . $image_group->admin_url() . '" target="_blank"><span class="fa fa-link"></span></a></td>
+                          <td class="center' . ($disabled ? ' disabled' : '') . '"><a href="#" onClick="renameGroup(event, \'' . ($disabled ? -1 : $image_group->id) . '\')"><span class="fa fa-edit"></span></a></td>
+                          <td class="center' . ($disabled ? ' disabled' : '') . '"><a href="#" onClick="refreshGroup(event, \'' . ($disabled ? -1 : $image_group->id) . '\')"><span class="fa fa-sync"></span></a></td>
+                          <td class="center"><a href="#" onClick="' . ($disabled ? 'restoreGroup' : 'deleteGroup') . '(event, \'' . $image_group->id . '\')"><span class="fa fa-trash' . ($disabled ? '-restore' : '') . '"></span></a></td>
+                        </tr>
+                      ');
+                    }
 
                     ?>
                   </tbody>
@@ -169,18 +169,12 @@ require_once(__DIR__ . "/Partials/DatabaseConnector.php");
           </div>
         </div>
       </div>
-      <footer class="sticky-footer bg-white">
-          <div class="container my-auto">
-            <div class="copyright text-center my-auto">
-              <span>Copyright &copy; Terry™ 2019</span>
-            </div>
-          </div>
-      </footer>
+      <?php require_once(__DIR__ . "/Resources/Components/Footer.php"); ?>
     </div>
     <a class="scroll-to-top rounded" href="#page-top">
       <i class="fas fa-angle-up"></i>
     </a>
-    <?php require_once(__DIR__ . "/Resources/Components/Footer.php"); ?>
+    <?php require_once(__DIR__ . "/Resources/Components/Scripts.php"); ?>
     <script>
       function postUpload() {
         document.getElementById('upload').submit();

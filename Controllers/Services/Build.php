@@ -33,7 +33,7 @@ if ($_POST['success'] !== "true") {
     $push = Push::find($_POST['pass']);
     $mail_destination = config("email");
 
-    if ($push && $push->email) {
+    if ($push && $push->email && strpos($push->email, "noreply") === false) {
         $mail_destination = $push->email;
     }
 
@@ -67,7 +67,13 @@ $build = Build::create([
 ]);
 
 $push = $build->find_parent();
-$message = "Repository - " . str_replace("git://", "", $push->url) . "<br>";
+$url = "??????";
+
+if ($push) {
+    $url = str_replace("git://", "", $push->url);
+}
+
+$message = "Repository - " . $url . "<br>";
 $message .= "Unit Tests - " . ($build->tests_passed ? "Passed": "Failed") . "<br>";
 $message .= "Setup Test - " . ($build->setup_passed ? "Passed": "Failed") . "<br>";
 $message .= "Twine Test - " . ($build->twine_passed ? "Passed": "Failed") . "<br>";
@@ -75,19 +81,29 @@ $message .= "Duration - " . $build->duration . " Seconds <br>";
 $message .= "<br>Full Console:<br><br>" . nl2br($_POST['log']);
 $mail_destination = config("email");
 
-if ($push->email) {
+if ($push && $push->email && strpos($push->email, "noreply") === false) {
     $mail_destination = $push->email;
 }
 
 send_email($mail_destination, config("email"), $message, "Build Report - " . ($build->is_successful ? "Success" : "Failed"));
 
-$query = "Build-Passing-Green";
+$query = "Build-Passing-green";
 
 if (!$build->is_successful) {
-    $query = "Build-Failing-Red";
+    $query = "Build-Failing-red";
 }
 
-file_put_contents(__DIR__ . "/../../../files/badges/" . $push->repository . ".svg", file_get_contents("https://img.shields.io/badge/" . $query));
+if ($push) {
+    file_put_contents(__DIR__ . "/../../../files/badges/" . $push->repository . ".svg", file_get_contents("https://img.shields.io/badge/" . $query));
+} else {
+    AppError::create([
+        "json" => json_encode([
+            "error" => "Invalid parent identifier. Failed to create build badge.",
+            "build_id" => $build->id,
+            "push_id" => $_POST['pass']
+        ])
+    ]);
+}
 
 response_success();
 

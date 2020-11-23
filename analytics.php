@@ -3,6 +3,7 @@
 require_once(__DIR__ . "/Partials/Authenticator.php");
 require_once(__DIR__ . "/Resources/Components/Header.php");
 require_once(__DIR__ . "/Partials/DatabaseConnector.php");
+
 ?>
 
 <body id="page-top">
@@ -14,7 +15,7 @@ require_once(__DIR__ . "/Partials/DatabaseConnector.php");
         <div class="container-fluid">
           <div class="d-sm-flex align-items-center justify-content-between mb-4">
             <h1 class="h3 mb-2 text-gray-800">Manage Analytics</h1>
-            <a href="#" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"><i class="fas fa-download fa-sm text-white-50"></i> Download Table</a>
+            <a href="#" onClick="downloadTable()" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"><i class="fas fa-download fa-sm text-white-50"></i> Download Table</a>
           </div>
           <div class="card shadow mb-4">
             <div class="card-header py-3">
@@ -34,22 +35,33 @@ require_once(__DIR__ . "/Partials/DatabaseConnector.php");
                   <tbody>
                     <?php
 
-                      $analytics = Analytics::all()->groupBy("url")->sort()->reverse();
+                    $analytics = Analytics::all()->groupBy("url")->sort()->reverse();
 
-                      foreach ($analytics as $url => $group) {
-                        echo('
-                          <tr' . ($group[0]->is_error ? ' style="background-color: #eee;"' : '') .'>
-                            <td>' . $url . '</td>
-                            <td>' . $group->count() . '</td>
-                            <td>' . $group->groupBy("address")->count() . '</td>
-                            <td class="center"><a href="#" onClick="deleteRow(event, \'' . $url . '\')"><span class="fa fa-trash"></span></a></td>
-                          </tr>
-                        ');
-                      }
+                    foreach ($analytics as $url => $group) {
+                      echo('
+                        <tr' . ($group[0]->is_error ? ' style="background-color: #eee;"' : '') .'>
+                          <td>' . $url . '</td>
+                          <td>' . $group->count() . '</td>
+                          <td>' . $group->groupBy("address")->count() . '</td>
+                          <td class="center"><a href="#" onClick="deleteRow(event, \'' . $url . '\')"><span class="fa fa-trash"></span></a></td>
+                        </tr>
+                      ');
+                    }
 
                     ?>
                   </tbody>
                 </table>
+                <?php 
+
+                if ($analytics->count() === 0) {
+                  echo('
+                    <div class="card bg-success text-white shadow">
+                      <div class="card-body">No analytics to display.</div>
+                    </div>
+                  ');
+                }
+
+                ?>
               </div>
             </div>
           </div>
@@ -66,22 +78,20 @@ require_once(__DIR__ . "/Partials/DatabaseConnector.php");
           </div>
         </div>
       </div>
-      <footer class="sticky-footer bg-white">
-        <div class="container my-auto">
-          <div class="copyright text-center my-auto">
-            <span>Copyright &copy; Terry™ 2019</span>
-          </div>
-        </div>
-      </footer>
+      <?php require_once(__DIR__ . "/Resources/Components/Footer.php"); ?>
     </div>
     <a class="scroll-to-top rounded" href="#page-top">
       <i class="fas fa-angle-up"></i>
     </a>
-    <?php require_once(__DIR__ . "/Resources/Components/Footer.php"); ?>
+    <?php require_once(__DIR__ . "/Resources/Components/Scripts.php"); ?>
     <script>
       function deleteRow(event, url) {
         event.preventDefault();
         postRequest('/Controllers/Admin/Analytics.php', 'delete', { url });
+      }
+
+      function downloadTable() {
+        postRequest('/Controllers/Admin/Analytics.php', 'download');
       }
     </script>
 </body>

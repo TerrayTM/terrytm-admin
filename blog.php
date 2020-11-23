@@ -1,5 +1,14 @@
 <?php
 
+$styles = '
+  <style>
+    #blogContainer {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr 1fr;
+    }
+  </style>
+';
+
 require_once(__DIR__ . "/Partials/Authenticator.php");
 require_once(__DIR__ . "/Resources/Components/Header.php");
 require_once(__DIR__ . "/Partials/DatabaseConnector.php");
@@ -18,14 +27,14 @@ require_once(__DIR__ . "/Partials/DatabaseConnector.php");
               <h6 class="m-0 font-weight-bold text-primary">Posts</h6>
             </div>
             <div class="card-body">
-              <div>
+              <div id="blogContainer">
                 <?php
 
-                  $posts = Blog::all();
+                $posts = Blog::all();
 
-                  foreach ($posts as $post) {
-                    echo('<div><a>' . $post->name . "</a></div>");
-                  }
+                foreach ($posts as $post) {
+                  echo('<a href="#" onClick="load(' . $post->id . ')">' . $post->name . '</a>');
+                }
 
                 ?>
               </div>
@@ -42,18 +51,12 @@ require_once(__DIR__ . "/Partials/DatabaseConnector.php");
           </div>
         </div>
       </div>
-      <footer class="sticky-footer bg-white">
-        <div class="container my-auto">
-          <div class="copyright text-center my-auto">
-            <span>Copyright &copy; Terry™ 2019</span>
-          </div>
-        </div>
-      </footer>
+      <?php require_once(__DIR__ . "/Resources/Components/Footer.php"); ?>
     </div>
     <a class="scroll-to-top rounded" href="#page-top">
       <i class="fas fa-angle-up"></i>
     </a>
-    <?php require_once(__DIR__ . "/Resources/Components/Footer.php"); ?>
+    <?php require_once(__DIR__ . "/Resources/Components/Scripts.php"); ?>
     <?php require_once(__DIR__ . "/Resources/Components/Editor.php"); ?>
     <script>
       async function save() {
@@ -63,6 +66,14 @@ require_once(__DIR__ . "/Partials/DatabaseConnector.php");
         } catch (error) {
           console.log(error);
         }
+      }
+
+      function load(id) {
+        asyncPostRequest('/Controllers/Admin/Blog.php', 'content', { id }).then((response) => {
+          if (response.success && response.data.content) {
+            editor.data = response.data.content;
+          }
+        });
       }
     </script>
 </body>

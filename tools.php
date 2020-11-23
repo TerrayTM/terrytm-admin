@@ -41,9 +41,9 @@ require_once(__DIR__ . "/Resources/Components/Header.php");
                       <td class="center"><a href="#" onClick="execute(event, 'job')"><span class="fa fa-play"></span></a></td>
                     </tr>
                     <tr>
-                      <td>Ping Test</td>
-                      <td contenteditable spellcheck="false" id="ping">{"url": "https://terrytm.com"}</td>
-                      <td class="center"><a href="#" onClick="execute(event, 'ping')"><span class="fa fa-play"></span></a></td>
+                      <td>SSL Test</td>
+                      <td contenteditable spellcheck="false" id="ssl">{"url": "https://terrytm.com"}</td>
+                      <td class="center"><a href="#" onClick="execute(event, 'ssl')"><span class="fa fa-play"></span></a></td>
                     </tr>
                     <tr>
                       <td>Discover IP</td>
@@ -68,18 +68,12 @@ require_once(__DIR__ . "/Resources/Components/Header.php");
           </div>
         </div>
       </div>
-      <footer class="sticky-footer bg-white">
-        <div class="container my-auto">
-          <div class="copyright text-center my-auto">
-            <span>Copyright &copy; Terry™ 2019</span>
-          </div>
-        </div>
-      </footer>
+      <?php require_once(__DIR__ . "/Resources/Components/Footer.php"); ?>
     </div>
     <a class="scroll-to-top rounded" href="#page-top">
       <i class="fas fa-angle-up"></i>
     </a>
-    <?php require_once(__DIR__ . "/Resources/Components/Footer.php"); ?>
+    <?php require_once(__DIR__ . "/Resources/Components/Scripts.php"); ?>
     <script>
       let executing = false;
 
@@ -102,7 +96,7 @@ require_once(__DIR__ . "/Resources/Components/Header.php");
         }
         executing = true;
         try {
-          const query = JSON.parse(document.getElementById(target).innerText);
+          const query = JSON.parse(document.getElementById(target).innerText.trim());
           if (Object.keys(query).some((key) => typeof query[key] === 'object' || typeof query[key] === 'array')) {
             throw "Query must be a flattened object.";
           }

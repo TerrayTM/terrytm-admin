@@ -15,6 +15,7 @@ require_once(__DIR__ . "/Partials/DatabaseConnector.php");
         <div class="container-fluid">
           <div class="d-sm-flex align-items-center justify-content-between mb-4">
             <h1 class="h3 mb-2 text-gray-800">Manage Servers</h1>
+            <a href="#" onClick="downloadTable()" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"><i class="fas fa-download fa-sm text-white-50"></i> Download Table</a>
           </div>
           <div class="card shadow mb-4">
             <div class="card-header py-3">
@@ -27,6 +28,7 @@ require_once(__DIR__ . "/Partials/DatabaseConnector.php");
                     <tr>
                       <th>ID</th>
                       <th>URL</th>
+                      <th>Proxy</th>
                       <th>Wake</th>
                       <th>Delete</th>
                     </tr>
@@ -34,23 +36,25 @@ require_once(__DIR__ . "/Partials/DatabaseConnector.php");
                   <tbody>
                     <?php
 
-                      $servers = Server::orderBy("id")->get();
+                    $servers = Server::orderBy("id")->get();
 
-                      foreach ($servers as $server) {
-                        echo('
-                          <tr>
-                            <td>' . $server->id . '</td>
-                            <td><a href="' . $server->url . '" target="_blank">' . $server->url . '</a></td>
-                            <td class="center"><a href="#" onClick="wake(event, \'' . $server->id . '\')"><span class="fa fa-play"></span></a></td>
-                            <td class="center"><a href="#" onClick="deleteRow(event, \'' . $server->id . '\')"><span class="fa fa-trash"></span></a></td>
-                          </tr>
-                        ');
-                      }
-                      
+                    foreach ($servers as $server) {
+                      echo('
+                        <tr>
+                          <td>' . $server->id . '</td>
+                          <td><a href="' . $server->url . '" target="_blank">' . $server->url . '</a></td>
+                          <td class="center"><a href="#" onClick="toggle(\'' . $server->id . '\')"><span class="fa fa-' . ($server->allow_proxy ? "toggle-on" : "toggle-off") . '"></span></a></td>
+                          <td class="center"><a href="#" onClick="wake(event, \'' . $server->id . '\')"><span class="fa fa-play"></span></a></td>
+                          <td class="center"><a href="#" onClick="deleteRow(event, \'' . $server->id . '\')"><span class="fa fa-trash"></span></a></td>
+                        </tr>
+                      ');
+                    }
+
                     ?>
                     <tr>
                       <td>Create</td>
                       <td contenteditable id="url"></td>
+                      <td></td>
                       <td></td>
                       <td class="center"><a href="#" onClick="create(event)"><span class="fa fa-save"></span></a></td>
                     </tr>
@@ -61,18 +65,12 @@ require_once(__DIR__ . "/Partials/DatabaseConnector.php");
           </div>
         </div>
       </div>
-      <footer class="sticky-footer bg-white">
-        <div class="container my-auto">
-          <div class="copyright text-center my-auto">
-            <span>Copyright &copy; Terry™ 2019</span>
-          </div>
-        </div>
-      </footer>
+      <?php require_once(__DIR__ . "/Resources/Components/Footer.php"); ?>
     </div>
     <a class="scroll-to-top rounded" href="#page-top">
       <i class="fas fa-angle-up"></i>
     </a>
-    <?php require_once(__DIR__ . "/Resources/Components/Footer.php"); ?>
+    <?php require_once(__DIR__ . "/Resources/Components/Scripts.php"); ?>
     <script>
       document.getElementById('url').addEventListener('paste', (event) => {
           event.preventDefault();
@@ -82,7 +80,7 @@ require_once(__DIR__ . "/Partials/DatabaseConnector.php");
 
       function create(event) {
         event.preventDefault();
-        const url = document.getElementById('url').innerText;
+        const url = document.getElementById('url').innerText.trim();
         if (url) {
           postRequest('/Controllers/Admin/Servers.php', 'create', { url });
         }
@@ -106,6 +104,14 @@ require_once(__DIR__ . "/Partials/DatabaseConnector.php");
             event.target.className = 'fa fa-thumbs-down';
           }
         });
+      }
+
+      function toggle(id) {
+        postRequest('/Controllers/Admin/Servers.php', 'toggle', { id });
+      }
+
+      function downloadTable() {
+        postRequest('/Controllers/Admin/Servers.php', 'download');
       }
     </script>
 </body>

@@ -16,6 +16,12 @@ switch($_POST['request']) {
         SSL::find($_POST['id'])->delete();
 
         break;
+    case "download":
+        require(__DIR__ . "/../../Helpers/DownloadCSV.php");
+
+        download_csv(SSL::class);
+
+        return;
     default:
         throw new Exception("Invalid request type.");
 }

@@ -30,6 +30,7 @@ switch ($_SERVER['REQUEST_METHOD']) {
         if (isset($_GET['route'])) {
             switch ($_GET['route']) {
                 case "badge": load("Badge");
+                case "proxy": load("Proxy");
                 default: response_error("Invalid GET route.");
             }
         } else {
@@ -45,7 +46,7 @@ switch ($_SERVER['REQUEST_METHOD']) {
         break;
     default:
         http_response_code(404);
-    
+
         break;
 }
 

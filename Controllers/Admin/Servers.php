@@ -22,6 +22,20 @@ switch($_POST['request']) {
         $response_data['success'] = wake_server(Server::find($_POST['id'])->url . "wake");
 
         break;
+    case "toggle":
+        $server = Server::find($_POST['id']);
+
+        $server->allow_proxy = !$server->allow_proxy;
+
+        $server->save();
+
+        break;
+    case "download":
+        require(__DIR__ . "/../../Helpers/DownloadCSV.php");
+
+        download_csv(Server::class);
+
+        return;
     default:
         throw new Exception("Invalid request type.");
 }

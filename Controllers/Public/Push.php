@@ -40,7 +40,7 @@ $json = json_decode($_POST['payload']);
 $email = null;
 
 if ($json->ref !== "refs/heads/master") {
-    response_success(["message" => "Unsupported branch."]);
+    response_error(["message" => "Unsupported branch."]);
 }
 
 if (isset($json->pusher->email) && $json->pusher->email) {

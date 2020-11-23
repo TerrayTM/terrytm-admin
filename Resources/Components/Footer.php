@@ -1,9 +1,7 @@
-<script>
-  const token = '<?php echo($token); ?>';
-</script>
-<script src="/Resources/vendor/jquery/jquery.min.js"></script>
-<script src="/Resources/vendor/bootstrap/bootstrap.bundle.min.js"></script>
-<script src="/Resources/vendor/jquery-easing/jquery.easing.min.js"></script>
-<script src="/Resources/Scripts/Theme.js"></script>
-<script src="/Resources/Scripts/Request.js"></script>
-<script src="/Resources/Scripts/Global.js"></script>
+<footer class="sticky-footer bg-white">
+    <div class="container my-auto">
+        <div class="copyright text-center my-auto">
+        <span>Copyright &copy; Terry™ 2020</span>
+        </div>
+    </div>
+</footer>

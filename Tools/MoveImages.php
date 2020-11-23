@@ -25,7 +25,7 @@ if (!isset($_SERVER['REQUEST_METHOD'])) {
         }
 
         $picture = $project->images()->orderBy("order", "DESC")->first();
-        $counter = $picture ? intval($picture->order) : 1;
+        $counter = $picture ? intval($picture->order) + 1 : 1;
 
         foreach ($files as $file) {
             $folder = strtolower(str_replace(" ", "-", $folder));

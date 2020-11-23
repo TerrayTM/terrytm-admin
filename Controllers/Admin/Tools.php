@@ -26,17 +26,17 @@ switch($_POST['request']) {
         }
 
         break;
-    case "ping":
+    case "ssl":
         validate_request($_POST, [
             ["url", "s"]
         ]);
 
-        require_once(__DIR__ . "/../../Helpers/PingTest.php");
+        require_once(__DIR__ . "/../../Helpers/SSLTest.php");
 
-        if (ping_test($_POST['url'])) {
-            $response_data['output'] = "Ping success!";
+        if (ssl_test($_POST['url'])) {
+            $response_data['output'] = "Valid SSL!";
         } else {
-            $response_data['output'] = "Ping failed! No response received.";
+            $response_data['output'] = "Invalid or missing SSL.";
         }
 
         break;

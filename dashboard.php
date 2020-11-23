@@ -14,26 +14,27 @@ $styles = '
       color: #3f3f3f;
     }
 
-    td:nth-child(3) span {
-      background-color: #a3a3a3;
-      color: #a3a3a3;
-    }
-
-    td:nth-child(3) span:hover {
-      background-color: initial;
-      color: #3f3f3f;
-    }
-
-    tr:nth-child(even) {
-      background-color: #f3e5f8;
-    }
-
     .task-style {
       cursor: pointer;
     }
 
     .task-style:hover {
       text-decoration: line-through;
+    }
+
+    .password-field {
+      -webkit-text-security: disc;
+    }
+
+    .task-creator {
+      border-radius: 3px;
+      border: 1px solid lightgray;
+      outline: none;
+      padding: 0 6px;
+    }
+
+    .log-link {
+      text-decoration: none !important;
     }
   </style>
 ';
@@ -74,7 +75,7 @@ $result = CronResult::orderBy("timestamp", "DESC")->first();
 $cron_status = "";
 
 if ($result) {
-  $cron_status = ($result->is_successful ? "✔" : "✘") . " " . date("m/d H:i", strtotime($result->timestamp));
+  $cron_status = ($result->is_successful ? "[OK]" : "[FAIL]") . " " . date("m/d H:i", strtotime($result->timestamp));
 
   if (!$result->is_successful) {
     $cron_status = '<span style="color: red">' . $cron_status . '</span>';
@@ -87,9 +88,9 @@ $servers = json_encode(Server::select("url")->get()->pluck("url")->toArray());
 $error_report = AppError::all()->count();
 
 if ($error_report === 0) {
-  $error_report = "None";
+  $error_report = "[OK] No Errors";
 } else {
-  $error_report = '<span style="color: red;">✘ ' . $error_report . ' Error' . ($error_report === 1 ? '' : 's') . '!</span>';
+  $error_report = '<span style="color: red;">[FAIL] ' . $error_report . ' Error' . ($error_report === 1 ? '' : 's') . ' Found</span>';
 }
 
 $task_list = "";
@@ -102,6 +103,25 @@ foreach ($tasks as $task) {
 ?>
 
 <body id="page-top">
+  <div class="modal fade" id="errorContent" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLongTitle">Error Log</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close" style="outline: none;">
+            <span>&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <textarea style="width: 100%; outline: none; cursor: default; height: 400px;" readonly></textarea>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-primary">Delete</button>
+        </div>
+      </div>
+    </div>
+  </div>
   <div id="wrapper">
     <?php require_once(__DIR__ . "/Resources/Components/SideBar.php"); ?>
     <div id="content-wrapper" class="d-flex flex-column">
@@ -122,7 +142,7 @@ foreach ($tasks as $task) {
                       <div class="h5 mb-0 font-weight-bold text-gray-800"><?php echo($cron_status); ?></div>
                     </div>
                     <div class="col-auto">
-                      <i class="fas fa-calendar fa-2x text-gray-300"></i>
+                      <i class="fas fa-cog fa-2x text-gray-300"></i>
                     </div>
                   </div>
                 </div>
@@ -226,16 +246,59 @@ foreach ($tasks as $task) {
           <div class="row">
             <div class="col-lg-6 mb-4">
               <div class="card shadow mb-4">
-                <div class="card-header py-3">
+                <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
                   <h6 class="m-0 font-weight-bold text-primary">Password Manager</h6>
+                  <div class="dropdown no-arrow">
+                    <a class="dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                      <i class="fas fa-ellipsis-v fa-sm fa-fw text-gray-400"></i>
+                    </a>
+                    <div class="dropdown-menu dropdown-menu-right shadow animated--fade-in" aria-labelledby="dropdownMenuLink">
+                      <div class="dropdown-header">Master Password</div>
+                      <div style="padding: 0 8px;">
+                        <form>
+                          <input id="master" autocomplete class="form-control" type="password"/>
+                        </form>
+                      </div>
+                    </div>
+                  </div>
                 </div>
                 <div class="card-body">
-                  <div class="table-responsive" style="min-height: 209px;">
+                  <div class="table-responsive" style="height: 209px; overflow: auto;">
                     <table>
                       <tr>
                         <th>Account</th>
                         <th>Username</th>
                         <th>Password</th>
+                        <th>View</th>
+                        <th>Delete</th>
+                      </tr>
+                      <?php
+
+                      $accounts = Account::all();
+
+                      foreach ($accounts as $account) {
+                        echo('
+                          <tr>
+                            <td>' . $account->name . '</td>
+                            <td>' . $account->username .'</td>
+                            <td class="password-field" id="P' . $account->id . '" cipher="' . $account->password . '">00000000000000000000</td>
+                            <td class="center"><a href="#" onClick="viewAccount(event, ' . $account->id . ')"><span class="fa fa-eye"></span></a></td>
+                            <td class="center"><a href="#" onClick="deleteAccount(event, ' . $account->id . ')"><span class="fa fa-trash"></span></a></td>
+                          </tr>
+                        ');
+                      }
+
+                      for ($i = 0; $i < 3 - $accounts->count(); ++$i) {
+                        echo("<tr><td>&nbsp;</td><td></td><td></td><td></td><td></td></tr>");
+                      }
+
+                      ?>
+                      <tr>
+                        <td contenteditable spellcheck="false" id="accountName"></td>
+                        <td contenteditable spellcheck="false" id="accountUsername"></td>
+                        <td contenteditable spellcheck="false" id="accountPassword"></td>
+                        <td></td>
+                        <td class="center"><a href="#" onClick="createAccount(event)"><span class="fa fa-save"></span></a></td>
                       </tr>
                     </table>
                   </div>
@@ -257,23 +320,31 @@ foreach ($tasks as $task) {
           </div>
         </div>
       </div>
-      <footer class="sticky-footer bg-white">
-        <div class="container my-auto">
-          <div class="copyright text-center my-auto">
-            <span>Copyright &copy; Terry™ 2019</span>
-          </div>
-        </div>
-      </footer>
+      <?php require_once(__DIR__ . "/Resources/Components/Footer.php"); ?>
     </div>
   </div>
   <a class="scroll-to-top rounded" href="#page-top">
     <i class="fas fa-angle-up"></i>
   </a>
-  <?php require_once(__DIR__ . "/Resources/Components/Footer.php"); ?>
+  <?php require_once(__DIR__ . "/Resources/Components/Scripts.php"); ?>
   <?php require_once(__DIR__ . "/Resources/Components/Chart.php"); ?>
+  <script src="/Resources/vendor/crypto.js/crypto.min.js"></script>
   <script>
     let logEntries = false;
     let taskCreating = false;
+    const deletePending = {};
+    const timeoutTracker = new Set();
+    const inputFields = ['accountName', 'accountUsername', 'accountPassword'];
+    const errorData = [];
+    inputFields.forEach((i) => removeFormatting(document.getElementById(i)));
+    
+    function removeFormatting(element) {
+      element.addEventListener('paste', (event) => {
+        event.preventDefault();
+        const text = (event.originalEvent || event).clipboardData.getData('text/plain');
+        document.execCommand('insertHTML', false, text);
+      });
+    }
 
     function log(text) {
       if (!logEntries) {
@@ -303,11 +374,81 @@ foreach ($tasks as $task) {
 
     function createTask(event) {
       if (!taskCreating) {
+        const element = document.createElement('li');
+        element.classList.add('task-creator');
+        element.setAttribute('contenteditable', 'true');
+        element.setAttribute('spellcheck', 'false');
+        element.addEventListener('keydown', taskInput);
+        removeFormatting(element);
         document.getElementById('taskEmpty').style.display = 'none';
-        document.getElementById('taskContainer').innerHTML += '<li style="border-radius: 3px; border: 1px solid lightgray; outline: none; padding: 0 6px;" contenteditable onKeyDown="taskInput(event)"></li>';
+        document.getElementById('taskContainer').appendChild(element);
+        element.focus();
         taskCreating = true;
       }
       event.preventDefault();
+    }
+
+    async function retrieveMaster() {
+      const master = document.getElementById('master').value.trim();
+      if (master.length < 8) {
+        return null;
+      }
+      const hash = CryptoJS.SHA256(master).toString();
+      const { status, data } = await asyncPostRequest('/Controllers/Admin/Dashboard.php', 'validateMaster', { hash });
+      log(status);
+      if (!data.valid) {
+        return null;
+      }
+      return master;
+    }
+
+    async function createAccount(event) {
+      event.preventDefault();
+      const name = document.getElementById('accountName').innerText.trim();
+      const username = document.getElementById('accountUsername').innerText.trim();
+      let password = document.getElementById('accountPassword').innerText.trim();
+      const master = await retrieveMaster();
+      if (name.length === 0 || username.length === 0 || password.length === 0 || !master) {
+        log("[Error] Insufficient Data");
+      } else {
+        password = CryptoJS.AES.encrypt(password, master).toString();
+        postRequest('/Controllers/Admin/Dashboard.php', 'createAccount', { name, username, password });
+      }
+    }
+
+    function deleteAccount(event, id) {
+      postRequest('/Controllers/Admin/Dashboard.php', 'deleteAccount', { id });
+      event.preventDefault();
+    }
+
+    async function viewAccount(event, id) {
+      event.preventDefault();
+      id = `P${id}`;
+      if (!timeoutTracker.has(id)) {
+        const element = document.getElementById(id);
+        const cipher = element.getAttribute('cipher');
+        const master = await retrieveMaster();
+        if (!master) {
+          log('[Error] Invalid Master Password');
+          return;
+        }
+        try {
+          const bytes = CryptoJS.AES.decrypt(cipher, master);
+          const password = bytes.toString(CryptoJS.enc.Utf8);
+          element.innerText = password;
+        } catch (error) {
+          log('[Error] Password Decryption Failed');
+          element.innerText = '0'.repeat(20);
+          return;
+        }
+        element.setAttribute('style', '-webkit-text-security: none;');
+        timeoutTracker.add(id);
+        setTimeout(() => {
+          element.innerText = '0'.repeat(20);
+          element.setAttribute('style', '-webkit-text-security: disc;');
+          timeoutTracker.delete(id);
+        }, 10000);
+      }
     }
 
     function taskInput(event) {
@@ -336,26 +477,31 @@ foreach ($tasks as $task) {
       }
     }
 
+    async function deleteError(event, id) {
+      const response = await asyncPostRequest('/Controllers/Admin/Dashboard.php', 'deleteError', { location: errorData[id].location });
+      if (response.success) {
+        errorData[id] = null;
+        $('#errorContent').modal('hide');
+      }
+    }
+
+    function showError(event, id) {
+      event.preventDefault();
+      if (errorData[id]) {
+        document.querySelector('#errorContent .modal-body textarea').value = errorData[id].content;
+        document.querySelector('#errorContent .btn-primary').setAttribute('onClick', `deleteError(event, ${id})`);
+        $('#errorContent').modal('show');
+      }
+    }
+
     async function checkErrors() {
-      <?php 
-    
-        $content = "";
-
-        // try {
-        //   foreach (AppLocation::$ERROR_LOGS as $location) {
-        //     $text = @file_get_contents($location);
-            
-        //     if ($text !== false) {
-        //       $content .= $text;
-        //     }
-        //   }
-        // } catch (Exception $exception) { }
-
-        echo("const errors = `" . $content . "`;");
-
-      ?>
-      if (errors) {
-        log(errors);
+      const response = await asyncPostRequest('/Controllers/Admin/Dashboard.php', 'checkErrors');
+      if (response.success) {
+        for (let i = 0; i < response.data.errors.length; ++i) {
+          const error = response.data.errors[i];
+          log(`[Error] Error Log: <a href="#" onClick="showError(event, ${i})" class="log-link">${error.location}</a>`);
+          errorData.push(error);
+        }
       }
     }
 
@@ -364,11 +510,13 @@ foreach ($tasks as $task) {
       let success = 0;
       for (let i = 0; i < servers.length; ++i) {
         try {
-          await Promise.race([
+          const response = await Promise.race([
             fetch(servers[i]),
             new Promise((_, reject) => setTimeout(() => reject(new Error()), 3000))
           ]);
-          ++success;
+          if (response.ok) {
+            ++success;
+          }
         } catch (error) {
           log(`[Error] Server Offline: ${servers[i]}`);
         }
@@ -406,8 +554,6 @@ foreach ($tasks as $task) {
         document.getElementById(id).scrollIntoView({ behavior: 'smooth' });
       }, 50);
     }
-
-    const deletePending = {};
 
     function deleteNote(id) {
       if (deletePending[id]) {

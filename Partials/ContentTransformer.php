@@ -30,5 +30,4 @@ if (isset($_SERVER['CONTENT_TYPE'])) {
     }
 }
 
-
 ?>

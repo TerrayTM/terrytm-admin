@@ -16,7 +16,12 @@ if ($messageCount === 0) {
     <i class="fa fa-bars"></i>
   </button>
   <p style="margin: 0;">
-    <span class="fa fa-code-branch"></span> V1.2.0 <span id="clock"><span class="fa fa-clock"></span> <?php echo($time); ?></span>
+    <span id="version">
+      <span class="fa fa-code-branch"></span> V1.3.0
+    </span>
+    <span id="clock">
+      <span class="fa fa-clock"></span> <?php echo($time); ?>
+    </span>
   </p>
   <ul class="navbar-nav ml-auto">
     <li class="nav-item mx-1">

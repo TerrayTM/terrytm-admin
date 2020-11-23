@@ -8,7 +8,7 @@ require_once(__DIR__ . "/../Partials/DatabaseConnector.php");
 
 if (!wake_server($url . "wake")) {
     CronResult::create([
-        "type" => CronType::$RUN_BUILD,
+        "type" => CronType::$RunBuild,
         "is_successful" => false,
         "message" => "Tuniper is not running."
     ]);
@@ -25,7 +25,7 @@ if (!wake_server($url . "wake")) {
             $do_exit = false;
 
             switch ($item->status()) {
-                case "Normal":
+                case "Inactive":
                     if (!$next) {
                         $next = $item;
                     }
@@ -68,7 +68,7 @@ if (!wake_server($url . "wake")) {
                 $next->save();
             } else {
                 CronResult::create([
-                    "type" => CronType::$RUN_BUILD,
+                    "type" => CronType::$RunBuild,
                     "is_successful" => false,
                     "message" => "No response from Tuniper with push ID " . $next->id . "."
                 ]);
@@ -84,8 +84,10 @@ if (!wake_server($url . "wake")) {
 
     if (!$reported) {
         CronResult::create([
-            "type" => CronType::$RUN_BUILD,
+            "type" => CronType::$RunBuild,
             "is_successful" => true
         ]);
     }
 }
+
+?>
