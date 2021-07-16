@@ -16,7 +16,7 @@ if (isset($_SESSION['authenticated']) && $_SESSION['authenticated']) {
             if (isset($decoded->expiry) && isset($decoded->signature)) {
                 require_once(__DIR__ . "/../Config/Config.php");
 
-                if ((int)$decoded->expiry > time() && password_verify($decoded->expiry . config("secret"), $decoded->signature)) {
+                if ((int)$decoded->expiry > time() && password_verify(config("secret") . $decoded->expiry . config("secret"), $decoded->signature)) {
                     $user_authenticated = true;
                     $_SESSION['authenticated'] = true;
                 } else {

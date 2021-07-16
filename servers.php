@@ -52,7 +52,7 @@ require_once(__DIR__ . "/Partials/DatabaseConnector.php");
 
                     ?>
                     <tr>
-                      <td>Create</td>
+                      <td></td>
                       <td contenteditable id="url"></td>
                       <td></td>
                       <td></td>
@@ -67,52 +67,53 @@ require_once(__DIR__ . "/Partials/DatabaseConnector.php");
       </div>
       <?php require_once(__DIR__ . "/Resources/Components/Footer.php"); ?>
     </div>
-    <a class="scroll-to-top rounded" href="#page-top">
-      <i class="fas fa-angle-up"></i>
-    </a>
-    <?php require_once(__DIR__ . "/Resources/Components/Scripts.php"); ?>
-    <script>
-      document.getElementById('url').addEventListener('paste', (event) => {
-          event.preventDefault();
-          const text = (event.originalEvent || event).clipboardData.getData('text/plain');
-          document.execCommand('insertHTML', false, text);
+  </div>
+  <a class="scroll-to-top rounded" href="#page-top">
+    <i class="fas fa-angle-up"></i>
+  </a>
+  <?php require_once(__DIR__ . "/Resources/Components/Scripts.php"); ?>
+  <script>
+    document.getElementById('url').addEventListener('paste', (event) => {
+        event.preventDefault();
+        const text = (event.originalEvent || event).clipboardData.getData('text/plain');
+        document.execCommand('insertHTML', false, text);
+    });
+
+    function create(event) {
+      event.preventDefault();
+      const url = document.getElementById('url').innerText.trim();
+      if (url) {
+        postRequest('/Controllers/Admin/Servers.php', 'create', { url });
+      }
+    }
+
+    function deleteRow(event, id) {
+      event.preventDefault();
+      postRequest('/Controllers/Admin/Servers.php', 'delete', { id });
+    }
+
+    function wake(event, id) {
+      event.preventDefault();
+      if (event.target.className === 'fa fa-signal') {
+        return;
+      }
+      event.target.className = 'fa fa-signal';
+      asyncPostRequest('/Controllers/Admin/Servers.php', 'wake', { id }).then((response) => {
+        if (response.success && response.data.success) {
+          event.target.className = 'fa fa-thumbs-up';
+        } else {
+          event.target.className = 'fa fa-thumbs-down';
+        }
       });
+    }
 
-      function create(event) {
-        event.preventDefault();
-        const url = document.getElementById('url').innerText.trim();
-        if (url) {
-          postRequest('/Controllers/Admin/Servers.php', 'create', { url });
-        }
-      }
+    function toggle(id) {
+      postRequest('/Controllers/Admin/Servers.php', 'toggle', { id });
+    }
 
-      function deleteRow(event, id) {
-        event.preventDefault();
-        postRequest('/Controllers/Admin/Servers.php', 'delete', { id });
-      }
-
-      function wake(event, id) {
-        event.preventDefault();
-        if (event.target.className === 'fa fa-signal') {
-          return;
-        }
-        event.target.className = 'fa fa-signal';
-        asyncPostRequest('/Controllers/Admin/Servers.php', 'wake', { id }).then((response) => {
-          if (response.success && response.data.success) {
-            event.target.className = 'fa fa-thumbs-up';
-          } else {
-            event.target.className = 'fa fa-thumbs-down';
-          }
-        });
-      }
-
-      function toggle(id) {
-        postRequest('/Controllers/Admin/Servers.php', 'toggle', { id });
-      }
-
-      function downloadTable() {
-        postRequest('/Controllers/Admin/Servers.php', 'download');
-      }
-    </script>
+    function downloadTable() {
+      postRequest('/Controllers/Admin/Servers.php', 'download');
+    }
+  </script>
 </body>
 </html>

@@ -7,7 +7,7 @@ $page_name = basename($_SERVER['PHP_SELF']);
 <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
     <a class="sidebar-brand d-flex align-items-center justify-content-center" href="#">
         <i class="fa fa-star"></i>
-        <div class="sidebar-brand-text mx-3">API Terry<sup>TM</sup></div>
+        <div class="sidebar-brand-text mx-3">Terry<sup>TM</sup> API</div>
     </a>
     <hr class="sidebar-divider my-0">
     <li class="nav-item <?php echo($page_name === "dashboard.php" ? "active" : ""); ?>">
@@ -24,6 +24,12 @@ $page_name = basename($_SERVER['PHP_SELF']);
         <a class="nav-link" href="/analytics.php">
             <i class="fas fa-fw fa-chart-area"></i>
             <span>Analytics</span>
+        </a>
+    </li>
+    <li class="nav-item <?php echo($page_name === "calendar.php" ? "active" : ""); ?>">
+        <a class="nav-link" href="/calendar.php">
+            <i class="fas fa-fw fa-calendar"></i>
+            <span>Calendar</span>
         </a>
     </li>
     <li class="nav-item <?php echo($page_name === "projects.php" ? "active" : ""); ?>">
@@ -68,6 +74,12 @@ $page_name = basename($_SERVER['PHP_SELF']);
             <span>SSL</span>
         </a>
     </li>
+    <li class="nav-item <?php echo($page_name === "jobs.php" ? "active" : ""); ?>">
+        <a class="nav-link" href="/jobs.php">
+            <i class="fas fa-fw fa-cog"></i>
+            <span>Jobs</span>
+        </a>
+    </li>
     <li class="nav-item <?php echo($page_name === "tools.php" ? "active" : ""); ?>">
         <a class="nav-link" href="/tools.php">
             <i class="fas fa-fw fa-tools"></i>
@@ -84,6 +96,18 @@ $page_name = basename($_SERVER['PHP_SELF']);
         <a class="nav-link" href="/builds.php">
             <i class="fas fa-fw fa-magic"></i>
             <span>Builds</span>
+        </a>
+    </li>
+    <li class="nav-item <?php echo($page_name === "permissions.php" ? "active" : ""); ?>">
+        <a class="nav-link" href="/permissions.php">
+            <i class="fas fa-fw fa-stop-circle"></i>
+            <span>Permissions</span>
+        </a>
+    </li>
+    <li class="nav-item <?php echo($page_name === "requests.php" ? "active" : ""); ?>">
+        <a class="nav-link" href="/requests.php">
+            <i class="fas fa-fw fa-rocket"></i>
+            <span>Requests</span>
         </a>
     </li>
     <hr class="sidebar-divider">

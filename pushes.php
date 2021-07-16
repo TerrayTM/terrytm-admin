@@ -75,14 +75,15 @@ require_once(__DIR__ . "/Partials/DatabaseConnector.php");
       </div>
       <?php require_once(__DIR__ . "/Resources/Components/Footer.php"); ?>
     </div>
-    <a class="scroll-to-top rounded" href="#page-top">
-      <i class="fas fa-angle-up"></i>
-    </a>
-    <?php require_once(__DIR__ . "/Resources/Components/Scripts.php"); ?>
-    <script>
-      function downloadTable() {
-        postRequest('/Controllers/Admin/Pushes.php', 'download');
-      }
-    </script>
+  </div>
+  <a class="scroll-to-top rounded" href="#page-top">
+    <i class="fas fa-angle-up"></i>
+  </a>
+  <?php require_once(__DIR__ . "/Resources/Components/Scripts.php"); ?>
+  <script>
+    function downloadTable() {
+      postRequest('/Controllers/Admin/Pushes.php', 'download');
+    }
+  </script>
 </body>
 </html>

@@ -1,6 +1,8 @@
 <?php
 
-validate_request($_POST, [["success", "s"]]);
+validate_request($_POST, [
+    ["success", "s"]
+]);
 
 require_once(__DIR__ . "/../../Partials/DatabaseConnector.php");
 require_once(__DIR__ . "/../../Helpers/SendEmail.php");

@@ -11,7 +11,7 @@ class CreateAccountsTable {
                 $table->increments("id");
                 $table->string("name", 128);
                 $table->string("username", 128);
-                $table->string("password", 128);
+                $table->string("password", 256);
             });
             return true;
         }

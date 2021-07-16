@@ -19,7 +19,7 @@ class Project extends Eloquent {
     }
 
     public function url($is_relative = false) {
-        return ($is_relative ? "" : "https://terrytm.com") . "/projects/" . str_replace(" ", "-", strtolower($this->type)) . "s/" . str_replace(" ", "-", strtolower($this->name));
+        return ($is_relative ? "" : "https://terrytm.com") . "/projects/" . str_replace(" ", "-", strtolower($this->type)) . "/" . str_replace(" ", "-", strtolower($this->name));
     }
 }
 

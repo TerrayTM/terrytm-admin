@@ -171,47 +171,48 @@ require_once(__DIR__ . "/Partials/DatabaseConnector.php");
       </div>
       <?php require_once(__DIR__ . "/Resources/Components/Footer.php"); ?>
     </div>
-    <a class="scroll-to-top rounded" href="#page-top">
-      <i class="fas fa-angle-up"></i>
-    </a>
-    <?php require_once(__DIR__ . "/Resources/Components/Scripts.php"); ?>
-    <script>
-      function postUpload() {
-        document.getElementById('upload').submit();
-      }
+  </div>
+  <a class="scroll-to-top rounded" href="#page-top">
+    <i class="fas fa-angle-up"></i>
+  </a>
+  <?php require_once(__DIR__ . "/Resources/Components/Scripts.php"); ?>
+  <script>
+    function postUpload() {
+      document.getElementById('upload').submit();
+    }
 
-      function upload(event, id) {
-        event.preventDefault();
-        document.getElementById('id').value = id;
-        id !== '-1' && document.getElementById('images').click();
-      }
+    function upload(event, id) {
+      event.preventDefault();
+      document.getElementById('id').value = id;
+      id !== '-1' && document.getElementById('images').click();
+    }
 
-      function deleteGroup(event, id) {
-        event.preventDefault();
-        postRequest('/Controllers/Admin/Images.php', 'delete', { id });
-      }
+    function deleteGroup(event, id) {
+      event.preventDefault();
+      postRequest('/Controllers/Admin/Images.php', 'delete', { id });
+    }
 
-      function restoreGroup(event, id) {
-        event.preventDefault();
-        postRequest('/Controllers/Admin/Images.php', 'restore', { id });
-      }
+    function restoreGroup(event, id) {
+      event.preventDefault();
+      postRequest('/Controllers/Admin/Images.php', 'restore', { id });
+    }
 
-      function renameGroup(event, id) {
-        event.preventDefault();
-        const element = document.getElementById(`A${id}`);
-        if (element && element.innerText.trim() && id !== '-1') {
-          postRequest('/Controllers/Admin/Images.php', 'rename', { id, name: element.innerText.trim() });
-        }
+    function renameGroup(event, id) {
+      event.preventDefault();
+      const element = document.getElementById(`A${id}`);
+      if (element && element.innerText.trim() && id !== '-1') {
+        postRequest('/Controllers/Admin/Images.php', 'rename', { id, name: element.innerText.trim() });
       }
+    }
 
-      function refreshGroup(event, id) {
-        event.preventDefault();
-        id !== '-1' && postRequest('/Controllers/Admin/Images.php', 'refresh', { id });
-      }
+    function refreshGroup(event, id) {
+      event.preventDefault();
+      id !== '-1' && postRequest('/Controllers/Admin/Images.php', 'refresh', { id });
+    }
 
-      function createGroup() {
-        postRequest('/Controllers/Admin/Images.php', 'create');
-      }
-    </script>
+    function createGroup() {
+      postRequest('/Controllers/Admin/Images.php', 'create');
+    }
+  </script>
 </body>
 </html>

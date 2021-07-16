@@ -1,5 +1,5 @@
 <?php
-
+// To do
 validate_request($_GET, [
     ["id", "s"]
 ]);
@@ -11,6 +11,8 @@ $server = Server::where($_GET['id']);
 if (!$server) {
     response_error("Invalid identifier.");
 }
+
+response_success();
 
 ?>
 

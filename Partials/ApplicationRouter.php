@@ -1,47 +1,38 @@
 <?php
 
-// TODO: Referrer should be moved to front-end
-// Group will be the referrer
-// Use IP as new visitor indicator
-if (isset($_GET['fbclid']) || isset($_GET['l']) || isset($_GET['r'])) {
-    require_once(__DIR__ . "/DatabaseConnector.php");
+$referrer = [
+    "/r" => "Resume",
+    "/l" => "LinkedIn",
+    "/i" => "Instagram",
+    "/g" => "Github"
+];
 
-    if (isset($_SERVER['HTTP_CLIENT_IP'])) {
-        $address = $_SERVER['HTTP_CLIENT_IP'];
-    } else if(isset($_SERVER['HTTP_X_FORWARDED_FOR'])) {
-        $address = $_SERVER['HTTP_X_FORWARDED_FOR'];
-    } else if(isset($_SERVER['HTTP_X_FORWARDED'])) {
-        $address = $_SERVER['HTTP_X_FORWARDED'];
-    } else if(isset($_SERVER['HTTP_FORWARDED_FOR'])) {
-        $address = $_SERVER['HTTP_FORWARDED_FOR'];
-    } else if(isset($_SERVER['HTTP_FORWARDED'])) {
-        $address = $_SERVER['HTTP_FORWARDED'];
-    } else if(isset($_SERVER['REMOTE_ADDR'])) {
-        $address = $_SERVER['REMOTE_ADDR'];
+if (array_key_exists($_SERVER['REQUEST_URI'], $referrer) || isset($_GET['fbclid'])) {
+    if (session_status() !== PHP_SESSION_ACTIVE) {
+        session_start();
     }
-
-    $referrer = "None";
 
     if (isset($_GET['fbclid'])) {
-        $referrer = "Facebook";
-    } else if (isset($_GET['l'])) {
-        $referrer = "LinkedIn";
-    } else if (isset($_GET['r'])) {
-        $referrer = "Resume";
+        $_SESSION['referrer'] = "Facebook";
+    } else {
+        $_SESSION['referrer'] = $referrer[$_SERVER['REQUEST_URI']];
     }
 
-    Analytics::create([
-        "url" => "/",
-        "group" => isset($_GET['fbclid']) ? "Facebook" : "Resume",
-        "address" => $address,
-        "is_error" => false
-    ]);
+    header("Location: https://" . $_SERVER['HTTP_HOST']);
+
+    exit();
 }
 
 $parts = explode("/", $_SERVER['REQUEST_URI']);
 
 if (count($parts) === 3 && $parts[1] === "image-group") { 
     require_once(__DIR__ . "/../Resources/Components/ImageGallery.php");
+
+    exit();
+}
+
+if (count($parts) === 6 && $parts[1] === "notification") { 
+    require_once(__DIR__ . "/../Resources/Components/ManageNotification.php");
 
     exit();
 }

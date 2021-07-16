@@ -12,8 +12,8 @@ class CreateAnalyticsTable {
                 $table->string("url", 128);
                 $table->string("address", 64)->nullable();
                 $table->string("group", 32);
+                $table->string("referrer", 16);
                 $table->boolean("is_error")->index();
-                $table->boolean("is_self")->index();
                 $table->timestamp("timestamp")->useCurrent();
             });
             return true;

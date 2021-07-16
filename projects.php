@@ -86,27 +86,28 @@ require_once(__DIR__ . "/Partials/DatabaseConnector.php");
       </div>
       <?php require_once(__DIR__ . "/Resources/Components/Footer.php"); ?>
     </div>
-    <a class="scroll-to-top rounded" href="#page-top">
-      <i class="fas fa-angle-up"></i>
-    </a>
-    <?php require_once(__DIR__ . "/Resources/Components/Scripts.php"); ?>
-    <script src="/Resources/vendor/jquery-ui/jquery-ui.min.js"></script>
-    <script>
-      function downloadTable() {
-        postRequest('/Controllers/Admin/Projects.php', 'download');
-      }
-
-      function deleteRow(event, id) {
-        event.preventDefault();
-        postRequest('/Controllers/Admin/Projects.php', 'delete', { id });
-      }
-    </script>
-    <?php
-
-    if (isset($_GET['edit'])) {
-      require_once(__DIR__ . "/Resources/Components/UpdateScript.php");
+  </div>
+  <a class="scroll-to-top rounded" href="#page-top">
+    <i class="fas fa-angle-up"></i>
+  </a>
+  <?php require_once(__DIR__ . "/Resources/Components/Scripts.php"); ?>
+  <script src="/Resources/vendor/jquery-ui/jquery-ui.min.js"></script>
+  <script>
+    function downloadTable() {
+      postRequest('/Controllers/Admin/Projects.php', 'download');
     }
 
-    ?>
+    function deleteRow(event, id) {
+      event.preventDefault();
+      postRequest('/Controllers/Admin/Projects.php', 'delete', { id });
+    }
+  </script>
+  <?php
+
+  if (isset($_GET['edit'])) {
+    require_once(__DIR__ . "/Resources/Components/UpdateScript.php");
+  }
+
+  ?>
 </body>
 </html>

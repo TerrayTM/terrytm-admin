@@ -22,7 +22,7 @@ require_once(__DIR__ . "/Partials/DatabaseConnector.php");
           if (isset($_GET['success'])) {
             echo('
               <div class="mb-4">
-                <div style="ma"class="card bg-info text-white shadow">
+                <div class="card bg-info text-white shadow">
                   <div class="card-body">' . ($_GET['success'] === "true" ? 'Rebuild request has been queued.' : 'An error has occurred.') . '</div>
                 </div>
               </div>
@@ -75,7 +75,7 @@ require_once(__DIR__ . "/Partials/DatabaseConnector.php");
                             <td>' . ($build->tests_passed ? "Passed" : "Failed") . '</td>
                             <td>' . ($build->setup_passed ? "Passed" : "Failed") . '</td>
                             <td>' . ($build->twine_passed ? "Passed" : "Failed") . '</td>
-                            <td>' . $build->timestamp . '</td>
+                            <td>' . date("Y-m-d H:i:s", strtotime($build->timestamp . " UTC")) . '</td>
                             <td class="center"><a href="#" onClick="retry(event, \'' . $build->id . '\')"><span class="fa fa-redo"></span></a></td>
                           </tr>
                         ');
@@ -119,19 +119,20 @@ require_once(__DIR__ . "/Partials/DatabaseConnector.php");
       </div>
       <?php require_once(__DIR__ . "/Resources/Components/Footer.php"); ?>
     </div>
-    <a class="scroll-to-top rounded" href="#page-top">
-      <i class="fas fa-angle-up"></i>
-    </a>
-    <?php require_once(__DIR__ . "/Resources/Components/Scripts.php"); ?>
-    <script>
-      function downloadTable() {
-        postRequest('/Controllers/Admin/Builds.php', 'download');
-      }
+  </div>
+  <a class="scroll-to-top rounded" href="#page-top">
+    <i class="fas fa-angle-up"></i>
+  </a>
+  <?php require_once(__DIR__ . "/Resources/Components/Scripts.php"); ?>
+  <script>
+    function downloadTable() {
+      postRequest('/Controllers/Admin/Builds.php', 'download');
+    }
 
-      function retry(event, id) {
-        event.preventDefault();
-        postRequest('/Controllers/Admin/Builds.php', 'retry', { id });
-      }
-    </script>
+    function retry(event, id) {
+      event.preventDefault();
+      postRequest('/Controllers/Admin/Builds.php', 'retry', { id });
+    }
+  </script>
 </body>
 </html>

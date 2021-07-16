@@ -1,17 +1,22 @@
 <?php
 
+$start_time = microtime(true);
 $url = "https://tuniper.terrytm.repl.co/";
 $callback = "https://api.terrytm.com/main.php";
 
 require_once(__DIR__ . "/../Helpers/WakeServer.php");
 require_once(__DIR__ . "/../Partials/DatabaseConnector.php");
+require_once(__DIR__ . "/../Helpers/WithReconnect.php");
 
 if (!wake_server($url . "wake")) {
-    CronResult::create([
-        "type" => CronType::$RunBuild,
-        "is_successful" => false,
-        "message" => "Tuniper is not running."
-    ]);
+    with_reconnect(function () use ($start_time) {
+        CronResult::create([
+            "type" => CronType::$RunBuild,
+            "is_successful" => false,
+            "message" => "Tuniper is not running.",
+            "duration" => microtime(true) - $start_time
+        ]);
+    });
 } else {
     require_once(__DIR__ . "/../Config/Config.php");
 
@@ -67,11 +72,14 @@ if (!wake_server($url . "wake")) {
             
                 $next->save();
             } else {
-                CronResult::create([
-                    "type" => CronType::$RunBuild,
-                    "is_successful" => false,
-                    "message" => "No response from Tuniper with push ID " . $next->id . "."
-                ]);
+                with_reconnect(function () use ($start_time, $next) {
+                    CronResult::create([
+                        "type" => CronType::$RunBuild,
+                        "is_successful" => false,
+                        "message" => "No response from Tuniper with push ID " . $next->id . ".",
+                        "duration" => microtime(true) - $start_time
+                    ]);
+                });
 
                 $reported = true;
 
@@ -83,10 +91,13 @@ if (!wake_server($url . "wake")) {
     }
 
     if (!$reported) {
-        CronResult::create([
-            "type" => CronType::$RunBuild,
-            "is_successful" => true
-        ]);
+        with_reconnect(function () use ($start_time) {
+            CronResult::create([
+                "type" => CronType::$RunBuild,
+                "is_successful" => true,
+                "duration" => microtime(true) - $start_time
+            ]);
+        });
     }
 }
 

@@ -1,6 +1,6 @@
 <?php
 
-require_once(__DIR__ . '/../../Partials/DatabaseConnector.php');
+require_once(__DIR__ . "/../../Partials/DatabaseConnector.php");
 
 $projects = Project::select(["name", "type", "date"])->orderBy("date", "DESC")->get();
 $blog = Blog::select(["name", "type", "date"])->orderBy("date", "DESC")->get();
@@ -13,31 +13,45 @@ $projects->transform(function ($item) {
     return $item;
 });
 
-$active = [];
-$past = [];
+$blog->transform(function ($item) {
+    $item['url'] = $item->url(true);
+
+    unset($item['date']);
+
+    return $item;
+});
+
+$project_response = [];
 
 foreach ($projects as $project) {
     $type = $project->type;
 
     unset($project['type']);
 
-    if ($type === "Active Project") {
-        $active[] = $project;
-    } else {
-        $past[] = $project;
+    if (!isset($project_response[$type])) {
+        $project_response[$type] = [];
     }
+
+    $project_response[$type][] = $project;
+}
+
+$blog_response = [];
+
+foreach ($blog as $post) {
+    $type = $post->type;
+
+    unset($post['type']);
+
+    if (!isset($blog_response[$type])) {
+        $blog_response[$type] = [];
+    }
+
+    $blog_response[$type][] = $post;
 }
 
 response_success([
-    "blog" => [
-        "Academics" => [],
-        "Entertainment" => [],
-        "Life Things" => []
-    ],
-    "projects" => [
-        "active" => $active,
-        "past" => $past
-    ]
+    "blog" => $blog_response,
+    "projects" => $project_response
 ]);
 
 ?>

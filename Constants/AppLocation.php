@@ -6,7 +6,9 @@ class AppLocation {
         __DIR__ . "/../error_log",
         __DIR__ . "/../Controllers/Admin/error_log",
         __DIR__ . "/../Controllers/Services/error_log",
-        __DIR__ . "/../Controllers/Public/error_log"
+        __DIR__ . "/../Controllers/Public/error_log",
+        __DIR__ . "/../Partials/error_log",
+        __DIR__ . "/../Jobs/error_log"
     ];
 }
 

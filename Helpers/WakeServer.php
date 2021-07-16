@@ -8,7 +8,7 @@ if (!function_exists("wake_server")) {
         curl_setopt_array($handle, [
             CURLOPT_RETURNTRANSFER => 1,
             CURLOPT_URL => $url,
-            CURLOPT_HTTPHEADER => ['Content-Type: application/json'],
+            CURLOPT_HTTPHEADER => ["Content-Type: application/json"],
             CURLOPT_POSTFIELDS => json_encode([
                 "identifier" => $identifier
             ]),

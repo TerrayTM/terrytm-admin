@@ -24,8 +24,16 @@ function postRequest(action, type, payload = null) {
   form.submit();
 }
 
-async function asyncPostRequest(action, type, payload = null) {
+async function asyncPostRequest(action, type, payload = null, files = null) {
   const body = new FormData(createForm(action, type, payload));
+  if (files) {
+    Object.keys(files).forEach((key) => {
+      if (body.has(key)) {
+        throw Error();
+      }
+      body.append(key, files[key])
+    });
+  }
   body.append('async', true);
   try {
     let response = await fetch(action, { body, method: 'post' });

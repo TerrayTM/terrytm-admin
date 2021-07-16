@@ -3,6 +3,10 @@
 require_once(__DIR__ . "/Partials/Authenticator.php");
 require_once(__DIR__ . "/Resources/Components/Header.php");
 
+$jobs = implode(", ", array_map(function ($item) {
+  return str_replace(".php", "", $item);
+}, array_diff(scandir(__DIR__ . "/Jobs"), [".", "..", ".htaccess"])));
+
 ?>
 
 <body id="page-top">
@@ -37,7 +41,7 @@ require_once(__DIR__ . "/Resources/Components/Header.php");
                     </tr>
                     <tr>
                       <td>Job Trigger</td>
-                      <td contenteditable spellcheck="false" id="job">{"name": "WakeServer", "choices": "CleanupServer, RunBuild, ValidateSSL, WakeServer"}</td>
+                      <td contenteditable spellcheck="false" id="job">{"name": "WakeServer", "choices": "<?php echo($jobs); ?>"}</td>
                       <td class="center"><a href="#" onClick="execute(event, 'job')"><span class="fa fa-play"></span></a></td>
                     </tr>
                     <tr>
@@ -70,50 +74,51 @@ require_once(__DIR__ . "/Resources/Components/Header.php");
       </div>
       <?php require_once(__DIR__ . "/Resources/Components/Footer.php"); ?>
     </div>
-    <a class="scroll-to-top rounded" href="#page-top">
-      <i class="fas fa-angle-up"></i>
-    </a>
-    <?php require_once(__DIR__ . "/Resources/Components/Scripts.php"); ?>
-    <script>
-      let executing = false;
+  </div>
+  <a class="scroll-to-top rounded" href="#page-top">
+    <i class="fas fa-angle-up"></i>
+  </a>
+  <?php require_once(__DIR__ . "/Resources/Components/Scripts.php"); ?>
+  <script>
+    let executing = false;
 
-      function log(message) {
-        const today = new Date();
-        const now = `${today.getFullYear()}-${today.getMonth()+1}-${today.getDate()} ${today.getHours()}:${today.getMinutes()}:${today.getSeconds()}`;
-        document.getElementById('output').innerHTML += `[${now}] ${message}<br>`;
-      }
+    function log(message) {
+      const today = new Date();
+      const now = `${today.getFullYear()}-${today.getMonth()+1}-${today.getDate()} ${today.getHours()}:${today.getMinutes()}:${today.getSeconds()}`;
+      document.getElementById('output').innerHTML += `[${now}] ${message}<br>`;
+    }
 
-      document.querySelectorAll('td[contenteditable]').forEach((element) => element.addEventListener('paste', (event) => {
-          event.preventDefault();
-          const text = (event.originalEvent || event).clipboardData.getData('text/plain');
-          document.execCommand('insertHTML', false, text);
-      }));
-
-      function execute(event, target) {
+    document.querySelectorAll('td[contenteditable]').forEach((element) => element.addEventListener('paste', (event) => {
         event.preventDefault();
-        if (executing) {
-          return;
-        }
-        executing = true;
-        try {
-          const query = JSON.parse(document.getElementById(target).innerText.trim());
-          if (Object.keys(query).some((key) => typeof query[key] === 'object' || typeof query[key] === 'array')) {
-            throw "Query must be a flattened object.";
-          }
-          log("Executing request...");
-          asyncPostRequest('/Controllers/Admin/Tools.php', target, query).then((response) => {
-            if (response.success && response.data.output) {
-              log(response.data.output);
-              log("Complete!");
-            } else {
-              log("An error has occurred!");
-            }
-          });
-        } catch (exception) {
-          log(exception);
-        }
-        executing = false;
+        const text = (event.originalEvent || event).clipboardData.getData('text/plain');
+        document.execCommand('insertHTML', false, text);
+    }));
+
+    function execute(event, target) {
+      event.preventDefault();
+      if (executing) {
+        return;
       }
-    </script>
+      executing = true;
+      try {
+        const query = JSON.parse(document.getElementById(target).innerText.trim());
+        if (Object.keys(query).some((key) => typeof query[key] === 'object' || typeof query[key] === 'array')) {
+          throw "Query must be a flattened object.";
+        }
+        log("Executing request...");
+        asyncPostRequest('/Controllers/Admin/Tools.php', target, query).then((response) => {
+          if (response.success && response.data.output) {
+            log(response.data.output);
+            log("Complete!");
+          } else {
+            log("An error has occurred!");
+          }
+        });
+      } catch (exception) {
+        log(exception);
+      }
+      executing = false;
+    }
+  </script>
 </body>
 </html>

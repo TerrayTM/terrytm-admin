@@ -42,7 +42,7 @@ require_once(__DIR__ . "/Partials/DatabaseConnector.php");
                         <tr>
                           <td>' . $error->id . '</td>
                           <td>' . $error->json . '</td>
-                          <td style="white-space: pre;">' . $error->timestamp . '</td>
+                          <td style="white-space: pre;">' . date("Y-m-d H:i:s", strtotime($error->timestamp . " UTC")) . '</td>
                           <td class="center"><a href="#" onClick="deleteRow(event, \'' . $error->id . '\')"><span class="fa fa-trash"></span></a></td>
                         </tr>
                       ');
@@ -69,19 +69,20 @@ require_once(__DIR__ . "/Partials/DatabaseConnector.php");
       </div>
       <?php require_once(__DIR__ . "/Resources/Components/Footer.php"); ?>
     </div>
-    <a class="scroll-to-top rounded" href="#page-top">
-      <i class="fas fa-angle-up"></i>
-    </a>
-    <?php require_once(__DIR__ . "/Resources/Components/Scripts.php"); ?>
-    <script>
-      function deleteRow(event, id) {
-        event.preventDefault();
-        postRequest('/Controllers/Admin/Errors.php', 'delete', { id });
-      }
+  </div>
+  <a class="scroll-to-top rounded" href="#page-top">
+    <i class="fas fa-angle-up"></i>
+  </a>
+  <?php require_once(__DIR__ . "/Resources/Components/Scripts.php"); ?>
+  <script>
+    function deleteRow(event, id) {
+      event.preventDefault();
+      postRequest('/Controllers/Admin/Errors.php', 'delete', { id });
+    }
 
-      function downloadTable() {
-        postRequest('/Controllers/Admin/Errors.php', 'download');
-      }
-    </script>
+    function downloadTable() {
+      postRequest('/Controllers/Admin/Errors.php', 'download');
+    }
+  </script>
 </body>
 </html>

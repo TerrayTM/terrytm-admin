@@ -38,7 +38,7 @@ require_once(__DIR__ . "/Partials/DatabaseConnector.php");
 
                     foreach ($watch_items as $item) {
                       echo('
-                        <tr' . ($item->is_valid ? '' : ' style="background-color: #eee;"') .'>
+                        <tr' . ($item->is_valid ? '' : ' style="background-color: #eee;"') . '>
                           <td>' . $item->id . '</td>
                           <td><a href="' . $item->url . '" target="_blank">' . $item->url . '</a></td>
                           <td class="center"><a href="#" onClick="deleteRow(event, \'' . $item->id . '\')"><span class="fa fa-trash"></span></a></td>
@@ -48,7 +48,7 @@ require_once(__DIR__ . "/Partials/DatabaseConnector.php");
                       
                     ?>
                     <tr>
-                      <td>Create</td>
+                      <td></td>
                       <td contenteditable id="url"></td>
                       <td class="center"><a href="#" onClick="create(event)"><span class="fa fa-save"></span></a></td>
                     </tr>
@@ -61,33 +61,34 @@ require_once(__DIR__ . "/Partials/DatabaseConnector.php");
       </div>
       <?php require_once(__DIR__ . "/Resources/Components/Footer.php"); ?>
     </div>
-    <a class="scroll-to-top rounded" href="#page-top">
-      <i class="fas fa-angle-up"></i>
-    </a>
-    <?php require_once(__DIR__ . "/Resources/Components/Scripts.php"); ?>
-    <script>
-      document.getElementById('url').addEventListener('paste', (event) => {
-          event.preventDefault();
-          const text = (event.originalEvent || event).clipboardData.getData('text/plain');
-          document.execCommand('insertHTML', false, text);
-      });
-
-      function create(event) {
+  </div>
+  <a class="scroll-to-top rounded" href="#page-top">
+    <i class="fas fa-angle-up"></i>
+  </a>
+  <?php require_once(__DIR__ . "/Resources/Components/Scripts.php"); ?>
+  <script>
+    document.getElementById('url').addEventListener('paste', (event) => {
         event.preventDefault();
-        const url = document.getElementById('url').innerText.trim();
-        if (url) {
-          postRequest('/Controllers/Admin/SSL.php', 'create', { url });
-        }
-      }
+        const text = (event.originalEvent || event).clipboardData.getData('text/plain');
+        document.execCommand('insertHTML', false, text);
+    });
 
-      function deleteRow(event, id) {
-        event.preventDefault();
-        postRequest('/Controllers/Admin/SSL.php', 'delete', { id });
+    function create(event) {
+      event.preventDefault();
+      const url = document.getElementById('url').innerText.trim();
+      if (url) {
+        postRequest('/Controllers/Admin/SSL.php', 'create', { url });
       }
+    }
 
-      function downloadTable() {
-        postRequest('/Controllers/Admin/SSL.php', 'download');
-      }
-    </script>
+    function deleteRow(event, id) {
+      event.preventDefault();
+      postRequest('/Controllers/Admin/SSL.php', 'delete', { id });
+    }
+
+    function downloadTable() {
+      postRequest('/Controllers/Admin/SSL.php', 'download');
+    }
+  </script>
 </body>
 </html>

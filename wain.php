@@ -31,6 +31,7 @@ switch ($_SERVER['REQUEST_METHOD']) {
             switch ($_GET['route']) {
                 case "badge": load("Badge");
                 case "proxy": load("Proxy");
+                case "query": load("Query");
                 default: response_error("Invalid GET route.");
             }
         } else {

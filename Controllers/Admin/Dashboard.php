@@ -32,7 +32,7 @@ switch ($_POST['request']) {
 
         break;
     case "deleteAnalytics":
-        if ($_POST['type'] === 'All') {
+        if ($_POST['type'] === "all") {
             Analytics::truncate();
         } else {
             Analytics::whereDate("timestamp", ">=", Carbon::now()->startOfMonth())->delete();

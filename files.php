@@ -60,7 +60,7 @@ require_once(__DIR__ . "/Resources/Components/Header.php");
 
                     ?>
                     <tr>
-                      <td>Create</td>
+                      <td></td>
                       <td></td>
                       <td></td>
                       <td class="center"><a href="#" onClick="create(event)"><span class="fa fa-save"></span></a></td>

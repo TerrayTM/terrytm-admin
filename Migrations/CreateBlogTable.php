@@ -14,6 +14,9 @@ class CreateBlogTable {
                 $table->date("date");
                 $table->string("author", 64);
                 $table->text("content");
+                $table->unsignedInteger("backup_id")->nullable();
+                $table->foreign("backup_id")->references("id")->on("blog")->onDelete("cascade");
+                $table->timestamps();
             });
             return true;
         }

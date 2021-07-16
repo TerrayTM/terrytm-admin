@@ -26,13 +26,13 @@ $tag_colors = json_encode(ProjectTag::select("color")->distinct()->get()->pluck(
       <input type="hidden" name="id" value="<?php echo($project->id ?? ""); ?>">
       <div class="form-group">
         <label>Name</label>
-        <input class="form-control" type="text" name="name" value="<?php echo($project->name ?? ""); ?>">
+        <input class="form-control" type="text" name="name" value="<?php echo($project->name ?? ""); ?>" required>
       </div>
       <div class="form-group">
         <label>Type</label>
         <select class="form-control" name="type">
-          <option <?php echo($project && $project->type === "Active Project" ? "selected" : ""); ?>>Active Project</option>
-          <option <?php echo($project && $project->type === "Past Project" ? "selected" : ""); ?>>Past Project</option>
+          <option <?php echo($project && $project->type === "Active Projects" ? "selected" : ""); ?>>Active Projects</option>
+          <option <?php echo($project && $project->type === "Past Projects" ? "selected" : ""); ?>>Past Projects</option>
         </select>
       </div>
       <div class="form-group">
@@ -89,7 +89,7 @@ $tag_colors = json_encode(ProjectTag::select("color")->distinct()->get()->pluck(
 
         if ($project) {
           foreach ($project->tags as $tag) {
-            echo('<button class="btn btn-info tag" style="background-color: '. $tag->color .';" onClick="deleteTag(event, ' .  $tag->id . ')">' . $tag->name . '<span class="fa fa-trash"></span></button>');
+            echo('<button class="btn btn-info tag" style="background-color: ' . $tag->color . ';" onClick="deleteTag(event, ' .  $tag->id . ')">' . $tag->name . '<span class="fa fa-trash"></span></button>');
           }
         }
 

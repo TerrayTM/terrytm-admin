@@ -6,9 +6,9 @@ validate_request($_POST, [
     ["message", "s"]
 ]);
 
-require_once(__DIR__ . '/../../Config/Config.php');
-require_once(__DIR__ . '/../../Helpers/SendEmail.php');
-require_once(__DIR__ . '/../../Partials/DatabaseConnector.php');
+require_once(__DIR__ . "/../../Config/Config.php");
+require_once(__DIR__ . "/../../Helpers/SendEmail.php");
+require_once(__DIR__ . "/../../Partials/DatabaseConnector.php");
 
 Message::create([
     "name" => $_POST['name'],

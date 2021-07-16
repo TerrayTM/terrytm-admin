@@ -1,9 +1,14 @@
 <?php
 
-require_once(__DIR__ . "/../Partials/DatabaseConnector.php");
+$start_time = microtime(true);
 
-CronResult::truncate();
-Token::truncate();
+require_once(__DIR__ . "/../Partials/DatabaseConnector.php");
+require_once(__DIR__ . "/../Helpers/WithReconnect.php");
+
+$last_week = date("Y-m-d H:i:s", time() - 604800);
+
+CronResult::where("timestamp", "<=", $last_week)->delete();
+Token::where("created_at", "<=", $last_week)->delete();
 
 foreach (Image::where("is_deleted", true)->get() as $image) {
     $name = __DIR__ . "/../../files/images/" . $image->group_id . "/" . $image->name;
@@ -37,9 +42,12 @@ foreach (ImageGroup::where("is_deleted", true)->get() as $group) {
     $group->delete();
 }
 
-CronResult::create([
-    "type" => CronType::$CleanupServer,
-    "is_successful" => true
-]);
+with_reconnect(function () use ($start_time) {
+    CronResult::create([
+        "type" => CronType::$CleanupServer,
+        "is_successful" => true,
+        "duration" => microtime(true) - $start_time
+    ]);
+});
 
 ?>

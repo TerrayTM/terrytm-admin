@@ -11,6 +11,7 @@ class CreateTokensTable {
                 $table->increments("id");
                 $table->string("value", 64)->index();
                 $table->boolean("is_consumed")->default(false);
+                $table->string("purpose", 32)->nullable(); // to do implement
                 $table->timestamps();
             });
             return true;

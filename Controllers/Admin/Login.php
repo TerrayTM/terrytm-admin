@@ -29,7 +29,7 @@ if (isset($_POST['request']) && $_POST['request'] === "logout") {
           $payload = (string)(time() + 2592000);
           $signed_payload = json_encode([
             "expiry" => $payload,
-            "signature" => password_hash($payload . config("secret"), PASSWORD_DEFAULT)
+            "signature" => password_hash(config("secret") . $payload . config("secret"), PASSWORD_DEFAULT)
           ]);
 
           setcookie("autologin", $signed_payload, time() + 2592000, "/");

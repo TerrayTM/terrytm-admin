@@ -2,7 +2,7 @@
 
 require_once(__DIR__ . "/../../Partials/DatabaseConnector.php");
 
-$time = date("H:i:s", time());
+$time = date("h:iA", time());
 $messageCount = Message::where("has_seen", false)->count();
 
 if ($messageCount === 0) {
@@ -17,7 +17,7 @@ if ($messageCount === 0) {
   </button>
   <p style="margin: 0;">
     <span id="version">
-      <span class="fa fa-code-branch"></span> V1.3.0
+      <span class="fa fa-code-branch"></span> V1.4.0
     </span>
     <span id="clock">
       <span class="fa fa-clock"></span> <?php echo($time); ?>

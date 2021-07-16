@@ -11,6 +11,7 @@ class CreateCronResultsTable {
                 $table->increments("id");
                 $table->string("type", 64)->index();
                 $table->string("message", 128)->nullable();
+                $table->decimal("duration", 8, 2);
                 $table->boolean("is_successful");
                 $table->timestamp("timestamp")->useCurrent();
             });

@@ -10,7 +10,7 @@ class CreateProjectsTable {
             $this->capsule::schema()->create("projects", function ($table) {
                 $table->increments("id");
                 $table->string("name", 32)->index();
-                $table->enum("type", ["Active Project", "Past Project"])->index();
+                $table->string("type", 32)->index();
                 $table->date("date");
                 $table->string("author", 64);
                 $table->text("description");

@@ -71,17 +71,27 @@ foreach ($notes as $note) {
   ';
 }
 
-$result = CronResult::orderBy("timestamp", "DESC")->first();
 $cron_status = "";
+$cron_success_count = 0;
+$nearest_half_hour = floor(time() / 1800) * 1800;
+$cron_results = CronResult::where("timestamp", ">", gmdate("Y-m-d H:i:s", $nearest_half_hour - 300))->where("timestamp", "<=", gmdate("Y-m-d H:i:s", $nearest_half_hour + 1200))->get();
 
-if ($result) {
-  $cron_status = ($result->is_successful ? "[OK]" : "[FAIL]") . " " . date("m/d H:i", strtotime($result->timestamp));
+foreach ($cron_results as $result) {
+  if ($result->is_successful) {
+    ++$cron_success_count;
+  }
+}
 
-  if (!$result->is_successful) {
-    $cron_status = '<span style="color: red">' . $cron_status . '</span>';
+if (count($cron_results) > 0) {
+  $cron_status = date("h:iA", $nearest_half_hour) . " " . $cron_success_count . "/" . count($cron_results);
+
+  if ($cron_success_count === count($cron_results)) {
+    $cron_status = "[OK] " . $cron_status;
+  } else {
+    $cron_status = '<span style="color: red">[FAIL] ' . $cron_status . '</span>';
   }
 } else {
-  $cron_status = "N/A";
+  $cron_status = "[OK] No Status";
 }
 
 $servers = json_encode(Server::select("url")->get()->pluck("url")->toArray());
@@ -98,6 +108,18 @@ $tasks = Task::all();
 
 foreach ($tasks as $task) {
   $task_list .= '<li class="task-style" onClick="deleteTask(\'' . $task->id . '\')" id="task_' . $task->id . '">' . $task->text . '</li>';
+}
+
+$event = CalendarEvent::where("start_date", ">", gmdate("Y-m-d H:i:s"))->orderBy("start_date")->first();
+$calendar_event = "[OK] No Events";
+
+if ($event) {
+  $start_time = strtotime($event->start_date . " UTC");
+  $calendar_event = date("m/d h:iA", $start_time);
+
+  if ($start_time <= time() + 10800) {
+    $calendar_event = '<span style="color: red;">' . $calendar_event . '<span>';
+  }
 }
 
 ?>
@@ -153,8 +175,8 @@ foreach ($tasks as $task) {
                 <div class="card-body">
                   <div class="row no-gutters align-items-center">
                     <div class="col mr-2">
-                      <div class="text-xs font-weight-bold text-success text-uppercase mb-1">Remind List</div>
-                      <div class="h5 mb-0 font-weight-bold text-gray-800">N/A</div>
+                      <div class="text-xs font-weight-bold text-success text-uppercase mb-1">Upcoming Event</div>
+                      <div class="h5 mb-0 font-weight-bold text-gray-800"><?php echo($calendar_event); ?></div>
                     </div>
                     <div class="col-auto">
                       <i class="fas fa-calendar fa-2x text-gray-300"></i>
@@ -183,8 +205,8 @@ foreach ($tasks as $task) {
                 <div class="card-body">
                   <div class="row no-gutters align-items-center">
                     <div class="col mr-2">
-                      <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">Repl.it Status</div>
-                      <div class="h5 mb-0 font-weight-bold text-gray-800" id="serverHealth"">Loading...</div>
+                      <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">Server Status</div>
+                      <div class="h5 mb-0 font-weight-bold text-gray-800" id="serverHealth"">Checking...</div>
                     </div>
                     <div class="col-auto">
                       <i class="fas fa-comments fa-2x text-gray-300"></i>
@@ -280,7 +302,7 @@ foreach ($tasks as $task) {
                         echo('
                           <tr>
                             <td>' . $account->name . '</td>
-                            <td>' . $account->username .'</td>
+                            <td>' . $account->username . '</td>
                             <td class="password-field" id="P' . $account->id . '" cipher="' . $account->password . '">00000000000000000000</td>
                             <td class="center"><a href="#" onClick="viewAccount(event, ' . $account->id . ')"><span class="fa fa-eye"></span></a></td>
                             <td class="center"><a href="#" onClick="deleteAccount(event, ' . $account->id . ')"><span class="fa fa-trash"></span></a></td>
@@ -289,7 +311,7 @@ foreach ($tasks as $task) {
                       }
 
                       for ($i = 0; $i < 3 - $accounts->count(); ++$i) {
-                        echo("<tr><td>&nbsp;</td><td></td><td></td><td></td><td></td></tr>");
+                        echo('<tr><td>&nbsp;</td><td></td><td></td><td></td><td></td></tr>');
                       }
 
                       ?>
@@ -411,9 +433,16 @@ foreach ($tasks as $task) {
       if (name.length === 0 || username.length === 0 || password.length === 0 || !master) {
         log("[Error] Insufficient Data");
       } else {
+        password = `${randomString(8)}${password}${randomString(8)}`;
         password = CryptoJS.AES.encrypt(password, master).toString();
         postRequest('/Controllers/Admin/Dashboard.php', 'createAccount', { name, username, password });
       }
+    }
+
+    function randomString(length) {
+      const array = new Uint8Array(length / 2);
+      window.crypto.getRandomValues(array);
+      return Array.from(array, (input) => input.toString(16).padStart(2, '0')).join('');
     }
 
     function deleteAccount(event, id) {
@@ -435,7 +464,7 @@ foreach ($tasks as $task) {
         try {
           const bytes = CryptoJS.AES.decrypt(cipher, master);
           const password = bytes.toString(CryptoJS.enc.Utf8);
-          element.innerText = password;
+          element.innerText = password.substring(8, password.length - 8);
         } catch (error) {
           log('[Error] Password Decryption Failed');
           element.innerText = '0'.repeat(20);
@@ -499,7 +528,10 @@ foreach ($tasks as $task) {
       if (response.success) {
         for (let i = 0; i < response.data.errors.length; ++i) {
           const error = response.data.errors[i];
-          log(`[Error] Error Log: <a href="#" onClick="showError(event, ${i})" class="log-link">${error.location}</a>`);
+          let display = error.location.split('..');
+          display.shift();
+          display = display.join('..');
+          log(`[Error] Error Log: <a href="#" onClick="showError(event, ${i})" class="log-link">${display}</a>`);
           errorData.push(error);
         }
       }
@@ -521,7 +553,11 @@ foreach ($tasks as $task) {
           log(`[Error] Server Offline: ${servers[i]}`);
         }
       }
-      document.getElementById('serverHealth').innerHTML = `Servers: ${success}/${servers.length}`;
+      let message = `${success === servers.length ? '[OK]' : '[FAIL]'} ${success}/${servers.length} Online`;
+      if (success !== servers.length) {
+        message = `<span style="color: red">${message}</span>`;
+      }
+      document.getElementById('serverHealth').innerHTML = message;
     }
 
     function createNote(event) {
@@ -582,7 +618,7 @@ foreach ($tasks as $task) {
     }
 
     function deleteAnalytics(all = false) {
-      postRequest('/Controllers/Admin/Dashboard.php', 'deleteAnalytics', { type: all ? 'All' : 'Month' });
+      postRequest('/Controllers/Admin/Dashboard.php', 'deleteAnalytics', { type: all ? 'all' : 'month' });
     }
 
     checkServerHealth();

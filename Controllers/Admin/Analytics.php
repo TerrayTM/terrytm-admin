@@ -11,11 +11,20 @@ switch($_POST['request']) {
     case "delete":
         Analytics::where("url", $_POST['url'])->delete();
 
+        $redirect = $_POST['referrer'];
+
         break;
     case "download":
         require(__DIR__ . "/../../Helpers/DownloadCSV.php");
 
         download_csv(Analytics::class);
+
+        return;
+    case "lookup":
+        // To do: https://ipapi.co/{ip}/json/
+
+        $redirect = $_POST['referrer'];
+
 
         return;
     default:

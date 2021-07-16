@@ -5,7 +5,7 @@ validate_request($_POST, [
     ["name", "s"]
 ]);
 
-require_once(__DIR__ . '/../../Partials/DatabaseConnector.php');
+require_once(__DIR__ . "/../../Partials/DatabaseConnector.php");
 
 $project = Project::where([
     "type" => $_POST['type'],
