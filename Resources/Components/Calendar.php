@@ -2,6 +2,7 @@
 <script src="/Resources/vendor/scheduler/ext/dhtmlxscheduler_limit.js"></script>
 <script>
   scheduler.config.hour_date="%h:%i %A";
+  scheduler.config.time_step = 30;
   scheduler.xy.scale_width = 70;
   scheduler.init('scheduler', new Date(), 'week');
 

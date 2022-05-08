@@ -81,7 +81,7 @@ function process_post_content($post = null) {
         }
     }
 
-    BlogImage::whereNull("blog_id")->delete();
+    BlogImage::whereNull("blog_id")->where("is_deleted", false)->delete();
 
     return [$post->id, $image_identifiers];
 }

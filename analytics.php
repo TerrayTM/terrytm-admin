@@ -55,8 +55,8 @@ foreach ($referrer_sources as $source) {
           </div>
           <div class="card shadow mb-4">
             <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-              <h6 class="m-0 font-weight-bold text-primary">Details (<?php echo($current_day ? $current_time . "-" . $current_day : "Summary") ?>)</h6>
-              <?php echo($current_day ? '<a href="/analytics.php?time=' . $current_time . '">View Summary</a>' : '') ?>
+              <h6 class="m-0 font-weight-bold text-primary">Details (<?php echo($current_day ? htmlspecialchars($current_time) . "-" . htmlspecialchars($current_day) : "Summary") ?>)</h6>
+              <?php echo($current_day ? '<a href="/analytics.php?time=' . htmlspecialchars($current_time) . '">View Summary</a>' : '') ?>
             </div>
             <div class="card-body">
               <canvas id="referrerChart" style="max-width: 800px; margin: auto auto 42px auto; display: <?php echo($analytics->count() === 0 ? "none" : "block"); ?>;"></canvas>
@@ -73,6 +73,7 @@ foreach ($referrer_sources as $source) {
                           <th>IP</th>
                           <th>Referrer</th>
                           <th>Timestamp</th>
+                          <th>Delete</th>
                         ");
                       } else {
                         echo("
@@ -90,14 +91,27 @@ foreach ($referrer_sources as $source) {
                     <?php
 
                     if ($current_day) {
+                      $group_alias = [];
+                      $group_id = 1;
+
                       foreach ($analytics->sortBy(function ($entry) { return strtotime($entry->timestamp); }) as $item) {
+                        $group = 0;
+
+                        if (isset($group_alias[$item->group])) {
+                          $group = $group_alias[$item->group];
+                        } else {
+                          $group = $group_id++;
+                          $group_alias[$item->group] = $group;
+                        }
+
                         echo('
                           <tr' . ($item->is_error ? ' style="background-color: #eee;"' : '') . '>
                             <td>' . $item->url . '</td>
-                            <td>' . $item->group . '</td>
+                            <td>' . $group . '</td>
                             <td>' . $item->address . '</td>
                             <td>' . $item->referrer . '</td>
                             <td>' . date("h:iA", strtotime($item->timestamp . "UTC")) . '</td>
+                            <td class="center"><a href="#" onClick="deleteItem(event, \'' . $item->id . '\')"><span class="fa fa-trash"></span></a></td>
                           </tr>
                         ');
                       }
@@ -150,13 +164,18 @@ foreach ($referrer_sources as $source) {
       const points = analyticsChart.getElementsAtEvent(event);
       if (points.length > 0) {
         const day = points[0]._index + 1;
-        window.location.href = `/analytics.php?time=<?php echo($current_time); ?>&day=${day.toString().padStart(2, '0')}`;
+        window.location.href = `/analytics.php?time=<?php echo(htmlspecialchars($current_time)); ?>&day=${day.toString().padStart(2, '0')}`;
       }
     });
 
     function deleteRow(event, url) {
       event.preventDefault();
       postRequest('/Controllers/Admin/Analytics.php', 'delete', { url, referrer: `${window.location.pathname}${window.location.search}` });
+    }
+
+    function deleteItem(event, id) {
+      event.preventDefault();
+      postRequest('/Controllers/Admin/Analytics.php', 'deleteItem', { id, referrer: `${window.location.pathname}${window.location.search}` });
     }
 
     function downloadTable() {

@@ -96,7 +96,7 @@ if (!$build->is_successful) {
 }
 
 if ($push) {
-    file_put_contents(__DIR__ . "/../../../files/badges/" . $push->repository . ".svg", file_get_contents("https://img.shields.io/badge/" . $query));
+    file_put_contents(__DIR__ . "/../../../files/badges/" . basename($push->repository) . ".svg", file_get_contents("https://img.shields.io/badge/" . $query));
 } else {
     AppError::create([
         "json" => json_encode([

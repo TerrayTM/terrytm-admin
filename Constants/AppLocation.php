@@ -10,6 +10,8 @@ class AppLocation {
         __DIR__ . "/../Partials/error_log",
         __DIR__ . "/../Jobs/error_log"
     ];
+
+    public static $LOCAL_HOST = "localhost";
 }
 
 ?>

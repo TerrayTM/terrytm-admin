@@ -1,6 +1,7 @@
 <?php
 
 require_once(__DIR__ . "/../../Partials/DatabaseConnector.php");
+require_once(__DIR__ . "/../../Config/Config.php");
 
 $time = date("h:iA", time());
 $messageCount = Message::where("has_seen", false)->count();
@@ -17,7 +18,7 @@ if ($messageCount === 0) {
   </button>
   <p style="margin: 0;">
     <span id="version">
-      <span class="fa fa-code-branch"></span> V1.4.0
+      <span class="fa fa-code-branch"></span> V1.4.1
     </span>
     <span id="clock">
       <span class="fa fa-clock"></span> <?php echo($time); ?>
@@ -25,12 +26,12 @@ if ($messageCount === 0) {
   </p>
   <ul class="navbar-nav ml-auto">
     <li class="nav-item mx-1">
-      <a class="nav-link" target="_blank" href="https://auth-db106.hostinger.com">
+      <a class="nav-link" target="_blank" href="<?php echo(config("database_panel")); ?>">
         <i class="fas fa-database fa-fw"></i>
       </a>
     </li>
     <li class="nav-item mx-1">
-      <a class="nav-link" target="_blank" href="https://webmail1.hostinger.com" onClick="deleteMessages()">
+      <a class="nav-link" target="_blank" href="<?php echo(config("email_panel")); ?>" onClick="deleteMessages()">
         <i class="fas fa-envelope fa-fw"></i>
         <span class="badge badge-danger badge-counter"><?php echo($messageCount); ?></span>
       </a>

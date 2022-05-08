@@ -68,9 +68,9 @@ require_once(__DIR__ . "/Partials/DatabaseConnector.php");
   <?php require_once(__DIR__ . "/Resources/Components/Scripts.php"); ?>
   <script>
     document.getElementById('url').addEventListener('paste', (event) => {
-        event.preventDefault();
-        const text = (event.originalEvent || event).clipboardData.getData('text/plain');
-        document.execCommand('insertHTML', false, text);
+      event.preventDefault();
+      const text = (event.originalEvent || event).clipboardData.getData('text/plain');
+      document.execCommand('insertHTML', false, text);
     });
 
     function create(event) {

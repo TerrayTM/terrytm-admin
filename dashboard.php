@@ -319,7 +319,7 @@ if ($event) {
                         <td contenteditable spellcheck="false" id="accountName"></td>
                         <td contenteditable spellcheck="false" id="accountUsername"></td>
                         <td contenteditable spellcheck="false" id="accountPassword"></td>
-                        <td></td>
+                        <td class="center"><a href="#" onClick="generatePassword(event)"><span class="fa fa-redo"></span></a></td>
                         <td class="center"><a href="#" onClick="createAccount(event)"><span class="fa fa-save"></span></a></td>
                       </tr>
                     </table>
@@ -359,6 +359,14 @@ if ($event) {
     const inputFields = ['accountName', 'accountUsername', 'accountPassword'];
     const errorData = [];
     inputFields.forEach((i) => removeFormatting(document.getElementById(i)));
+
+    document.getElementById('chart').addEventListener('click', (event) => {
+      const points = analyticsChart.getElementsAtEvent(event);
+      if (points.length > 0) {
+        const day = points[0]._index + 1;
+        window.location.href = `/analytics.php?time=<?php echo(date("Y-m")); ?>&day=${day.toString().padStart(2, '0')}`;
+      }
+    });
     
     function removeFormatting(element) {
       element.addEventListener('paste', (event) => {
@@ -422,6 +430,33 @@ if ($event) {
         return null;
       }
       return master;
+    }
+
+    function shuffleArray(array) {
+      for (let i = array.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [array[i], array[j]] = [array[j], array[i]];
+      }
+    }
+
+    function generatePassword(event) {
+      event.preventDefault();
+      const randomArray = [
+        ['0123456789', 6],
+        ['abcdefghijklmnopqrstuvwxyz', 6],
+        ['ABCDEFGHIJKLMNOPQRSTUVWXYZ', 4],
+        ['!@#$%^&*()_-+=', 2]
+      ].map((space) => {
+        const result = [];
+        for (let i = 0; i < space[1]; ++i) {
+          result.push(space[0].charAt(Math.floor(Math.random() * space[0].length)));
+        }
+        return result;
+      }).reduce((previous, current) => [...current, ...previous], []);
+      shuffleArray(randomArray);
+      const generated = randomArray.join('');
+      document.getElementById('accountPassword').innerText = generated;
+      navigator.clipboard.writeText(generated);
     }
 
     async function createAccount(event) {
@@ -507,7 +542,11 @@ if ($event) {
     }
 
     async function deleteError(event, id) {
-      const response = await asyncPostRequest('/Controllers/Admin/Dashboard.php', 'deleteError', { location: errorData[id].location });
+      const response = await asyncPostRequest('/Controllers/Admin/Dashboard.php', 'deleteError', {
+        location: errorData[id].location,
+        expiry: errorData[id].expiry,
+        signature: errorData[id].signature
+      });
       if (response.success) {
         errorData[id] = null;
         $('#errorContent').modal('hide');

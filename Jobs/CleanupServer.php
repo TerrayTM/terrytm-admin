@@ -42,6 +42,9 @@ foreach (ImageGroup::where("is_deleted", true)->get() as $group) {
     $group->delete();
 }
 
+// To do: Delete blog images
+// Remove is_deleted=true blog images and remove from CDN
+
 with_reconnect(function () use ($start_time) {
     CronResult::create([
         "type" => CronType::$CleanupServer,

@@ -31,7 +31,7 @@ require_once(__DIR__ . "/Partials/DatabaseConnector.php");
                       <th>Duration</th>
                       <th>Average Duration</th>
                       <th>Success</th>
-                      <th>Runs</th>
+                      <th>Count</th>
                       <th>Delete</th>
                     </tr>
                   </thead>
@@ -50,14 +50,14 @@ require_once(__DIR__ . "/Partials/DatabaseConnector.php");
                       $is_successful = true;
                       $success_rate = "";
                       $average_duration = "";
-                      $runs = "";
+                      $count = "";
 
                       if ($result) {
                         $timestamp = date("Y-m-d H:i:s", strtotime($result->timestamp . " UTC"));
                         $duration = $result->duration;
                         $is_successful = $result->is_successful;
-                        $runs = CronResult::where("type", $value)->count();
-                        $success_rate = round(CronResult::where("type", $value)->where("is_successful", true)->count() / $runs * 100) . "%";
+                        $count = CronResult::where("type", $value)->count();
+                        $success_rate = round(CronResult::where("type", $value)->where("is_successful", true)->count() / $count * 100) . "%";
                         $average_duration = number_format(CronResult::where("type", $value)->avg("duration"), 2, ".", "");
                         $message_groups = CronResult::selectRaw("message, type, COUNT(*) as count")->where("type", $value)->groupBy("message")->get()->filter(function ($value) {
                           return !is_null($value->message);
@@ -75,7 +75,7 @@ require_once(__DIR__ . "/Partials/DatabaseConnector.php");
                           <td>' . $duration . '</td>
                           <td>' . $average_duration . '</td>
                           <td>' . $success_rate . '</td>
-                          <td>' . $runs . '</td>
+                          <td>' . $count . '</td>
                           <td class="center"><a href="#" onClick="deleteRow(event, \'' . $value . '\')"><span class="fa fa-trash"></span></a></td>
                         </tr>
                       ';

@@ -46,14 +46,14 @@ switch($_POST['request']) {
             ]);
 
             $jobs = __DIR__ . "/../../Jobs";
-            $file = $_POST['name'] . ".php";
+            $file = basename($_POST['name']) . ".php";
             $suppress_sleep = true;
 
             if (in_array($file, scandir($jobs), true)) {
                 require_once($jobs . "/" . $file);
                 require_once(__DIR__ . "/../../Partials/DatabaseConnector.php");
 
-                $result = CronResult::where("type", $_POST['name'])->latest("timestamp")->first();
+                $result = CronResult::where("type", basename($_POST['name']))->latest("timestamp")->first();
                 
                 if ($result && time() - strtotime($result->timestamp) <= 30) {
                     $response_data['output'] = "Job finished execution at " . $result->timestamp . " with " . ($result->is_successful ? "success" : "failure") . ".";

@@ -87,12 +87,12 @@ if (isset($_GET['edit'])) {
               <form action="/Controllers/Admin/Blog.php" method="post" onsubmit="savePost(event)" id="postForm">
                 <?php echo($token_input); ?>
                 <input type="hidden" name="request" id="requestInput" value="<?php echo($post ? "edit" : "create"); ?>">
-                <input type="hidden" name="id" value="<?php echo($post->id ?? ""); ?>">
+                <input type="hidden" name="id" value="<?php echo(htmlspecialchars($post->id ?? "")); ?>">
                 <input type="hidden" name="content" id="contentInput">
                 <div class="form-group">
                   <label>Name</label>
                   <div class="input-group mb-3">
-                    <input class="form-control" type="text" name="name" value="<?php echo($post->name ?? ""); ?>" required>
+                    <input class="form-control" type="text" name="name" value="<?php echo(htmlspecialchars($post->name ?? "")); ?>" required>
                     <div class="input-group-append">
                       <button class="btn btn-outline-secondary" onClick="viewBlog()" type="button" <?php echo($post ? '' : 'disabled'); ?>>View</button>
                     </div>
@@ -112,11 +112,11 @@ if (isset($_GET['edit'])) {
                 </div>
                 <div class="form-group">
                   <label>Date</label>
-                  <input class="form-control" type="date" name="date" value="<?php echo($post->date ?? ""); ?>">
+                  <input class="form-control" type="date" name="date" value="<?php echo(htmlspecialchars($post->date ?? "")); ?>">
                 </div>
                 <div class="form-group">
                   <label>Author</label>
-                  <input class="form-control" type="text" name="author" value="<?php echo($post->author ?? ""); ?>">
+                  <input class="form-control" type="text" name="author" value="<?php echo(htmlspecialchars($post->author ?? "")); ?>">
                 </div>
                 <label>Editor <span style="color: blue; display: none" id="sizeWarning">(Image Size > 2MB)</span></label>
                 <div class="form-group">
@@ -192,13 +192,13 @@ if (isset($_GET['edit'])) {
     }
 
     function viewBlog() {
-      window.open(<?php echo($post ? "'" . $post->url() . "'": "''") ?>, '_blank');
+      window.open(<?php echo($post ? "'" . htmlspecialchars($post->url()) . "'": "''") ?>, '_blank');
     }
 
     <?php
     
     if ($post) {
-      echo('load(' . $post->id . ');');
+      echo('load(' . htmlspecialchars($post->id) . ');');
     }
 
     ?>

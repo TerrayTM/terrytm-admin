@@ -14,6 +14,12 @@ switch($_POST['request']) {
         $redirect = $_POST['referrer'];
 
         break;
+    case "deleteItem":
+        Analytics::find($_POST['id'])->delete();
+
+        $redirect = $_POST['referrer'];
+
+        break;
     case "download":
         require(__DIR__ . "/../../Helpers/DownloadCSV.php");
 

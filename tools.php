@@ -66,7 +66,7 @@ $jobs = implode(", ", array_map(function ($item) {
             <div class="card-body">
               <div style="width: 100%; height: 600px; overflow: auto; border: 1px solid lightgray; border-radius: 3px; padding: 8px; cursor: default;" readonly id="output">
                 TerryTM API Output<br>
-                ---------------------<br>
+                ----------------------<br>
               </div>
             </div>
           </div>
@@ -89,9 +89,9 @@ $jobs = implode(", ", array_map(function ($item) {
     }
 
     document.querySelectorAll('td[contenteditable]').forEach((element) => element.addEventListener('paste', (event) => {
-        event.preventDefault();
-        const text = (event.originalEvent || event).clipboardData.getData('text/plain');
-        document.execCommand('insertHTML', false, text);
+      event.preventDefault();
+      const text = (event.originalEvent || event).clipboardData.getData('text/plain');
+      document.execCommand('insertHTML', false, text);
     }));
 
     function execute(event, target) {

@@ -41,7 +41,7 @@ require_once(__DIR__ . "/Partials/DatabaseConnector.php");
                       echo('
                         <tr>
                           <td>' . $error->id . '</td>
-                          <td>' . $error->json . '</td>
+                          <td>' . htmlspecialchars($error->json) . '</td>
                           <td style="white-space: pre;">' . date("Y-m-d H:i:s", strtotime($error->timestamp . " UTC")) . '</td>
                           <td class="center"><a href="#" onClick="deleteRow(event, \'' . $error->id . '\')"><span class="fa fa-trash"></span></a></td>
                         </tr>

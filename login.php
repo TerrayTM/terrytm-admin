@@ -11,6 +11,10 @@ if ($user_authenticated) {
   exit();
 }
 
+require_once(__DIR__ . "/Partials/DatabaseConnector.php");
+
+SecurityLog::log(AdminEvent::$LOGIN_VISIT);
+
 require_once(__DIR__ . "/Resources/Components/Header.php");
 
 ?>

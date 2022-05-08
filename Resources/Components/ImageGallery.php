@@ -36,7 +36,9 @@ if (!$images) {
 }
 
 foreach ($images as $image) {
-  $content_html .= '<div class="no-outline"><div class="image" style="background-image: url(https://terrytm.com/files/images/' . $group_id . '/' . $image->name . ');"></div></div>';
+  $path = '/files/images/' . $group_id . '/' . $image->name;
+  $data_path = $_SERVER['HTTP_HOST'] === "api.terrytm.com" ? "https://terrytm.com" . $path : $path;
+  $content_html .= '<div class="no-outline"><div class="image" data-path="' . $data_path . '" style="background-image: url(https://terrytm.com' . $path . ');"></div></div>';
 }
 
 ?>
@@ -72,7 +74,7 @@ foreach ($images as $image) {
 
       .inner-container {
         margin: auto;
-        height: 10%;
+        height: 64px;
         width: <?php echo(min(64 * $images->count(), 512) + 32); ?>px;
       }
 
@@ -120,6 +122,7 @@ foreach ($images as $image) {
         font-size: 18px;
         cursor: pointer;
         padding: 8px;
+        text-decoration: none;
       }
 
       .button:hover {
@@ -129,7 +132,7 @@ foreach ($images as $image) {
   </head>
   <body>
     <section class="control">
-      <button class="button" onClick="download()">Download</button>
+      <a class="button" onClick="downloadImage(event)" download id="download-link">Download</a>
     </section>
     <section class="view">
       <div class="main">
@@ -143,14 +146,11 @@ foreach ($images as $image) {
         </div>
       </div>
     </section>
-    <a download id="download-link" style="display: none;"></a>
     <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha256-pasqAKBDmFT4eHoN2ndd6lN370kFiGUFyTiUHWhU7k8=" crossorigin="anonymous"></script>
     <script type="text/javascript" src="//cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.min.js"></script>
-    <script type="text/javascript">
-      function download(event) {
-        const element = document.getElementById('download-link');
-        element.setAttribute('href', document.querySelector('.slick-current').children[0].style.backgroundImage.split('"')[1]);
-        element.click();
+    <script>
+      function downloadImage(event) {
+        event.target.setAttribute('href', document.querySelector('.slick-current').children[0].getAttribute('data-path'));
       }
 
       $('.main').slick({
@@ -163,7 +163,7 @@ foreach ($images as $image) {
       });
 
       $('.navigation').slick({
-        slidesToShow: <?php echo(min(8, $images->count())); ?>,
+        slidesToShow: <?php echo(htmlspecialchars(min(8, $images->count()))); ?>,
         slidesToScroll: 1,
         asNavFor: '.main',
         dots: false,

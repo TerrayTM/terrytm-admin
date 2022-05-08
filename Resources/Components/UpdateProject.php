@@ -17,16 +17,16 @@ $tag_colors = json_encode(ProjectTag::select("color")->distinct()->get()->pluck(
 </div>
 <div class="card shadow mb-4">
   <div class="card-header py-3">
-    <h6 class="m-0 font-weight-bold text-primary"><?php echo($project->name ?? "Create Project"); ?> (Basic Info)</h6>
+    <h6 class="m-0 font-weight-bold text-primary"><?php echo(htmlspecialchars($project->name ?? "Create Project")); ?> (Basic Info)</h6>
   </div>
   <div class="card-body">
     <form action="/Controllers/Admin/Projects.php" method="post">
       <?php echo($token_input); ?>
       <input type="hidden" name="request" value="<?php echo($project ? "edit" : "create"); ?>">
-      <input type="hidden" name="id" value="<?php echo($project->id ?? ""); ?>">
+      <input type="hidden" name="id" value="<?php echo(htmlspecialchars($project->id ?? "")); ?>">
       <div class="form-group">
         <label>Name</label>
-        <input class="form-control" type="text" name="name" value="<?php echo($project->name ?? ""); ?>" required>
+        <input class="form-control" type="text" name="name" value="<?php echo(htmlspecialchars($project->name ?? "")); ?>" required>
       </div>
       <div class="form-group">
         <label>Type</label>
@@ -37,19 +37,19 @@ $tag_colors = json_encode(ProjectTag::select("color")->distinct()->get()->pluck(
       </div>
       <div class="form-group">
         <label>Date</label>
-        <input class="form-control" type="date" name="date" value="<?php echo($project->date ?? ""); ?>">
+        <input class="form-control" type="date" name="date" value="<?php echo(htmlspecialchars($project->date ?? "")); ?>">
       </div>
       <div class="form-group">
         <label>Author</label>
-        <input class="form-control" type="text" name="author" value="<?php echo($project->author ?? ""); ?>">
+        <input class="form-control" type="text" name="author" value="<?php echo(htmlspecialchars($project->author ?? "")); ?>">
       </div>
       <div class="form-group">
         <label>Description</label>
-        <textarea style="height: 200px;" class="form-control" name="description"><?php echo($project->description ?? ""); ?></textarea>
+        <textarea style="height: 200px;" class="form-control" name="description"><?php echo(htmlspecialchars($project->description ?? "")); ?></textarea>
       </div>
       <div class="form-group">
         <label>Link</label>
-        <input class="form-control" type="text" name="link" value="<?php echo($project->link ?? ""); ?>">
+        <input class="form-control" type="text" name="link" value="<?php echo(htmlspecialchars($project->link ?? "")); ?>">
       </div>
       <div class="form-group">
         <input class="btn btn-primary" type="submit">
@@ -59,7 +59,7 @@ $tag_colors = json_encode(ProjectTag::select("color")->distinct()->get()->pluck(
 </div>
 <div class="card shadow mb-4">
   <div class="card-header py-3">
-    <h6 class="m-0 font-weight-bold text-primary"><?php echo($project->name ?? "Create Project"); ?> (Associated Info)</h6>
+    <h6 class="m-0 font-weight-bold text-primary"><?php echo(htmlspecialchars($project->name ?? "Create Project")); ?> (Associated Info)</h6>
   </div>
   <div class="card-body">
     <div class="form-group">
@@ -69,7 +69,7 @@ $tag_colors = json_encode(ProjectTag::select("color")->distinct()->get()->pluck(
 
         if ($project) {
           foreach ($project->technologies as $technology) {
-            echo('<button class="btn btn-info tag" onClick="deleteTechnology(event, ' .  $technology->id . ')">' . $technology->technology . '<span class="fa fa-trash"></span></button>');
+            echo('<button class="btn btn-info tag" onClick="deleteTechnology(event, ' .  htmlspecialchars($technology->id) . ')">' . htmlspecialchars($technology->technology) . '<span class="fa fa-trash"></span></button>');
           }
         }
 
@@ -78,7 +78,7 @@ $tag_colors = json_encode(ProjectTag::select("color")->distinct()->get()->pluck(
       <div class="input-group mb-2 mr-sm-2">
         <input placeholder="Technology" class="form-control" type="text" id="technology">
         <div class="input-group-append">
-          <button class="input-group-text btn btn-info" <?php echo($project ? '' : 'disabled') ?> onClick="createTechnology(event, <?php echo($project ? $project->id : 'null') ?>)">Add</button>
+          <button class="input-group-text btn btn-info" <?php echo($project ? '' : 'disabled') ?> onClick="createTechnology(event, <?php echo($project ? htmlspecialchars($project->id) : 'null') ?>)">Add</button>
         </div>
       </div>
     </div>
@@ -89,7 +89,7 @@ $tag_colors = json_encode(ProjectTag::select("color")->distinct()->get()->pluck(
 
         if ($project) {
           foreach ($project->tags as $tag) {
-            echo('<button class="btn btn-info tag" style="background-color: ' . $tag->color . ';" onClick="deleteTag(event, ' .  $tag->id . ')">' . $tag->name . '<span class="fa fa-trash"></span></button>');
+            echo('<button class="btn btn-info tag" style="background-color: ' . htmlspecialchars($tag->color) . ';" onClick="deleteTag(event, ' .  htmlspecialchars($tag->id) . ')">' . htmlspecialchars($tag->name) . '<span class="fa fa-trash"></span></button>');
           }
         }
 
@@ -99,7 +99,7 @@ $tag_colors = json_encode(ProjectTag::select("color")->distinct()->get()->pluck(
         <input placeholder="Value" class="form-control" type="text" id="tagValue">
         <input placeholder="Color" class="form-control" type="text" id="tagColor">
         <div class="input-group-append">
-          <button class="input-group-text btn btn-info" <?php echo($project ? '' : 'disabled') ?> onClick="createTag(event, <?php echo($project ? $project->id : 'null') ?>)">Add</button>
+          <button class="input-group-text btn btn-info" <?php echo($project ? '' : 'disabled') ?> onClick="createTag(event, <?php echo($project ? htmlspecialchars($project->id) : 'null') ?>)">Add</button>
         </div>
       </div>
     </div>
@@ -115,9 +115,9 @@ $tag_colors = json_encode(ProjectTag::select("color")->distinct()->get()->pluck(
 
           foreach ($images as $image) {
             echo('
-              <li class="ui-state-default" id="I' . $image->id . '">
-                <button onClick="deleteImage(event, ' .  $image->id . ')">&times;</button>
-                <img src="' . $image->url . '" alt="Project Image" style="width: 100%;">
+              <li class="ui-state-default" id="I' . htmlspecialchars($image->id) . '">
+                <button onClick="deleteImage(event, ' .  htmlspecialchars($image->id) . ')">&times;</button>
+                <img src="' . htmlspecialchars($image->url) . '" alt="Project Image" style="width: 100%;">
               </li>
             ');
           }
@@ -126,8 +126,8 @@ $tag_colors = json_encode(ProjectTag::select("color")->distinct()->get()->pluck(
         ?>
       </ul>
       <br>
-      <button class="btn btn-success" <?php echo($project ? '' : 'disabled') ?> onClick="uploadImages(<?php echo($project ? $project->id : 'null') ?>)">Upload Images</button>
-      <button class="btn btn-info" <?php echo($project && count($images) > 0 ? '' : 'disabled') ?> onClick="saveImageOrder(<?php echo($project ? $project->id : 'null') ?>)">Save Image Order</button>
+      <button class="btn btn-success" <?php echo($project ? '' : 'disabled') ?> onClick="uploadImages(<?php echo($project ? htmlspecialchars($project->id) : 'null') ?>)">Upload Images</button>
+      <button class="btn btn-info" <?php echo($project && count($images) > 0 ? '' : 'disabled') ?> onClick="saveImageOrder(<?php echo($project ? htmlspecialchars($project->id) : 'null') ?>)">Save Image Order</button>
     </div>
     <form action="/Controllers/Admin/Projects.php" method="post" id="upload" style="display: none;" enctype="multipart/form-data">
       <?php echo($token_input); ?>

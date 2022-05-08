@@ -49,8 +49,14 @@ switch ($_POST['request']) {
         break;
 
     case "deleteError":
-        if (is_file($_POST['location'])) {
-            unlink($_POST['location']);
+        require_once(__DIR__ . "/../../Config/Config.php");
+
+        $candidate = config("secret") . json_encode([$_POST['location'], $_POST["expiry"]]) . config("secret");
+
+        if (password_verify($candidate, $_POST["signature"]) && intval($_POST["expiry"]) > time()) {
+            if (basename($_POST['location']) === "error_log" && is_file($_POST['location'])) {
+                unlink($_POST['location']);
+            }
         }
 
         break;
@@ -73,15 +79,20 @@ switch ($_POST['request']) {
 
         break;
     case "checkErrors":
+        require_once(__DIR__ . "/../../Config/Config.php");
+
         $output = [];
 
         foreach (AppLocation::$error_logs as $location) {
             if (is_file($location)) {
                 $content = file_get_contents($location);
+                $expiry = strval(time() + 21600);
 
                 $output[] = [
                     "location" => $location,
-                    "content" => $content
+                    "content" => $content,
+                    "expiry" => $expiry,
+                    "signature" => password_hash(config("secret") . json_encode([$location, $expiry]) . config("secret"), PASSWORD_DEFAULT)
                 ];
             }
         }

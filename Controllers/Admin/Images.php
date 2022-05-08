@@ -61,22 +61,32 @@ switch($_POST['request']) {
     case "upload":
         require_once(__DIR__ . "/../../Helpers/GenerateToken.php");
         
-        for ($i = 0; $i < count($_FILES['images']['name']); ++$i) {
-            $type = explode("/", $_FILES['images']['type'][$i])[1];
-            $file_name = str_replace(".", "", uniqid("image-", true)) . generate_token(9) . "." . $type;
-            $name = __DIR__ . "/../../../files/images/" . $_POST['id'] . "/" . $file_name;
+        if (is_numeric($_POST['id'])) {
+            for ($i = 0; $i < count($_FILES['images']['name']); ++$i) {
+                $type = explode("/", $_FILES['images']['type'][$i])[1];
+                $file_name = str_replace(".", "", uniqid("image-", true)) . generate_token(9) . "." . $type;
+                $name = __DIR__ . "/../../../files/images/" . $_POST['id'] . "/" . $file_name;
 
-            move_uploaded_file($_FILES['images']['tmp_name'][$i], $name);
+                move_uploaded_file($_FILES['images']['tmp_name'][$i], $name);
 
-            if (file_exists($name)) {
-                Image::create([
-                    "name" => $file_name,
-                    "group_id" => $_POST['id'],
-                    "size" => $_FILES['images']['size'][$i]
-                ]);
-            } else {
-                $redirect = "/images.php?error=true";
+                if (file_exists($name)) {
+                    Image::create([
+                        "name" => $file_name,
+                        "group_id" => $_POST['id'],
+                        "size" => $_FILES['images']['size'][$i]
+                    ]);
+                } else {
+                    $redirect = "/images.php?error=true";
+                }
             }
+        } else {
+            AppError::create([
+                "json" => json_encode([
+                    "operation" => "create",
+                    "controller" => "images",
+                    "id" => $_POST['id']
+                ])
+            ]);
         }
         
         break;
